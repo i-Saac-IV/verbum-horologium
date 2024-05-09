@@ -1,0 +1,6 @@
+# Files to ignore
+*.epf
+*.s#*
+*.b#*
+TEMPLATE.ino
+cheat_sheet.txt
