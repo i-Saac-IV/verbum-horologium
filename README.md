@@ -5,7 +5,7 @@
 
 
 ## To do
-
+- https://fonts.adobe.com/fonts/stenciletta
 
 # Usage
 ## Hardware and setup
