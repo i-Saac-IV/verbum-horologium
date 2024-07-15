@@ -4,7 +4,17 @@ Creator: Isaac Pawley
 Date: 28-06-2024
 Repo: https://github.com/i-Saac-IV/verbum-horologium
 
+Probs some good stuff to know...
+FastLED version 3.7.0
+Wire version 2.1.4
+Raspberry Pi Pico/RP2040 3.7.2
+
 */
+
+/* to do */
+// setup the LRDs - done!
+// get the colck's alt display mode going - done!! I;m on a rol today!
+// fix the colour pallette stuff
 
 #include <FastLED.h>
 #include <Wire.h>
@@ -20,7 +30,7 @@ Repo: https://github.com/i-Saac-IV/verbum-horologium
 #define LED_TYPE WS2812B
 #define COLOR_ORDER GRB
 
-#define MAX_MAXTRIX_BRIGHTNESS 50
+#define MAX_MAXTRIX_BRIGHTNESS 255  //100
 
 const CRGB MIDNIGHT_COLOR = CRGB(0x8000ff);
 const CRGB MIDDAY_COLOR = CRGB(0xffa600);
@@ -36,8 +46,12 @@ unsigned int last_loop_time;
 #define RTC_POLLING_PERIOD 10
 
 bool explicit_mode_en = false;
-uint8_t mode;
+uint8_t mode = 0;
 uint8_t colorPaletteMode;
+
+bool state = 0;
+
+uint32_t counter;
 
 uint8_t word_map[][2] = {
   { 1, 3 },  //TEN            0
@@ -155,6 +169,8 @@ bool digit_map[10][6][6] = {
     { 0, 0, 0, 0, 1, 0 } }
 };
 
+byte minute_case;
+byte old_minute;
 uint8_t switch_hour;
 uint16_t year;
 byte month;
@@ -164,8 +180,11 @@ byte hour;
 byte minute;
 byte second;
 
-/* to do */
-// write all the code...
+int raw_daylight_val;
+int raw_ambient_val;
+int raw_control_val;
+
+float hue;
 
 void setup() {
   // put your setup code here, to run once:
@@ -174,9 +193,12 @@ void setup() {
   getTime();
   randomSeed(DAYLIGHT);
   FastLED.addLeds<LED_TYPE, LED_MAXTRIX_PIN, COLOR_ORDER>(led_matrix, NUM_MATRIX_LEDS).setCorrection(TypicalLEDStrip);
-  FastLED.setBrightness(MAX_MAXTRIX_BRIGHTNESS);
+  raw_daylight_val = analogRead(DAYLIGHT);
+  FastLED.setBrightness(map(raw_daylight_val, 0, 1024, 0, MAX_MAXTRIX_BRIGHTNESS));
+  readLDRs();
   pinMode(ACTIVITY_PIN, OUTPUT);
 
+  /*
   //led matrix sanitiy check
   fill_solid(led_matrix, NUM_MATRIX_LEDS, CRGB::Red);
   FastLED.show();
@@ -189,22 +211,64 @@ void setup() {
   delay(333);
   FastLED.clear();
   FastLED.show();
+*/
+
+  uint8_t startup_delay = 40;
+  uint16_t last_letter;
+  uint8_t letter_index = 1;
+
+  counter = 0;
+
+  while (counter < 3) {
+    fadeToBlackBy(led_matrix, NUM_MATRIX_LEDS, 10);
+
+    if (millis() > last_letter + startup_delay) {
+      last_letter = millis();
+      letter_index++;
+    }
+
+    if (letter_index < 7) {
+      led_matrix[12 * (letter_index + 1)] = CHSV(map(letter_index, 0, 17, 0, 255), 255, 255);
+    } else if (letter_index < 17) {
+      led_matrix[86 + letter_index - 7] = CHSV(map(letter_index, 0, 17, 0, 255), 255, 255);
+    } else if (letter_index > 37) {
+      if (millis() > last_loop_time + 1000) {  //runs "every second" ish
+        last_loop_time = millis();
+        counter++;
+        led_matrix[85] = CRGB::White;
+      }
+    }
+    FastLED.show();
+    delay(1000 / FPS);
+  }
+
+  while (led_matrix[85].getLuma() != 0 && millis() < 10000) {
+    fadeToBlackBy(led_matrix, NUM_MATRIX_LEDS, 10);
+    FastLED.show();
+    delay(1000 / FPS);
+  }
+  delay(100);
 }
-uint8_t hue;
 
 void loop() {
   // put your main code here, to run repeatedly:
+  counter++;
+  if (counter % 100 == 0) {
+    readLDRs();
+  }
 
   if (millis() > last_rtc_pole_time + (1000 * RTC_POLLING_PERIOD)) {
     last_rtc_pole_time = millis();
     getTime();
-    hue = random(0, 255);
     updateSerialPort();
   }
 
-  if (millis() > last_loop_time + 950) {  //runs "every second" ish
+  if (millis() > last_loop_time + 1000) {  //runs "every second" ish
     last_loop_time = millis();
-    if (second < 60) second++;
+    if (second < 60) {
+      second++;
+    }
+    state = !state;
   }
 
   if (Serial.available()) {
@@ -223,6 +287,7 @@ void loop() {
       Serial.println(mode);
     } else if (command == 'C' || command == 'c') {  //type 'c' into serial monitor to cycle color pallette.
       colorPaletteMode++;
+      old_minute = 61;
       Serial.print("Color Pallette: ");
       Serial.println(colorPaletteMode);
     } else {
@@ -232,9 +297,102 @@ void loop() {
     Serial.println();
   }
 
+  int breath_led_index;
+
+  switch (mode) {
+    case 0:
+      displayWordTime();
+      breath_led_index = 85;
+      break;
+    case 1:
+      displayDigitalTime(0);
+      breath_led_index = 146;
+      break;
+    case 2:
+      displayDigitalTime(1);
+      breath_led_index = 146;
+      break;
+    default:
+      mode = 0;
+  }
+
+  if (state == 1) {
+    state = 0;
+    led_matrix[breath_led_index] = CRGB::White;
+  }
+
+  digitalWrite(ACTIVITY_PIN, state);
+  FastLED.show();
+  delay(1000 / FPS);
+}
+
+void displayDigitalTime(bool _12h_enable) {
+  fadeToBlackBy(&led_matrix[0], NUM_MATRIX_LEDS - 5, 50);
+  fadeToBlackBy(&led_matrix[144], 5, 10);
+
+  if (minute != old_minute) {
+    old_minute = minute;
+    hue = random(0, 255);
+  }
+
+  if ((hour > 12) && (_12h_enable == true)) {
+    loadDigit(1, int((hour - 12) / 10));
+    loadDigit(2, (hour - 12) % 10);
+  } else {
+    loadDigit(1, int(hour / 10));
+    loadDigit(2, hour % 10);
+  }
+  loadDigit(3, int(minute / 10));
+  loadDigit(4, minute % 10);
+}
+
+void loadDigit(uint8_t place, uint8_t digit) {
+  int x_shift;
+  int y_shift;
+  CRGB DIGIT_COLOR;
+
+  switch (place) {
+    case 1:  // top left
+      x_shift = 0;
+      y_shift = 0;
+      DIGIT_COLOR = CHSV(hue, 255, 255);
+      break;
+    case 2:  // top right
+      x_shift = 6;
+      y_shift = 0;
+      DIGIT_COLOR = CHSV(hue, 255, 255);
+      break;
+    case 3:  // bottom left
+      x_shift = 0;
+      y_shift = 6;
+      DIGIT_COLOR = CHSV(hue + (255 / 2), 255, 255);
+      break;
+    case 4:  // bottom right
+      x_shift = 6;
+      y_shift = 6;
+      DIGIT_COLOR = CHSV(hue + (255 / 2), 255, 255);
+      break;
+    default:
+      char buffer[40];
+      sprintf(buffer, "Unable to load digit in place: %d", place);
+      led_matrix[85] = CRGB::Red;
+      Serial.println(buffer);
+      return;
+  }
+  for (int row = 0; row < 6; row++) {
+    for (int column = 0; column < 6; column++) {
+      if (digit_map[digit][row][column] == 1) {
+        led_matrix[(12 * (row + y_shift)) + column + x_shift] = DIGIT_COLOR;
+      }
+    }
+  }
+}
+
+
+void displayWordTime() {
   fadeToBlackBy(led_matrix, NUM_MATRIX_LEDS, 10);
+
   uint8_t max_red_brightness = 160;
-  
   switch (minute % 5) {
     case 0:
       led_matrix[144] = CHSV(0, 255, map(int(second / 10), 0, 6, 40, max_red_brightness));
@@ -257,7 +415,6 @@ void loop() {
       break;
   }
 
-
   if (((hour == 0) || (hour == 12)) && (minute == 0)) {
     if (hour == 0) {  //5th word_map element, MIDNIGHT
       fill_solid(&led_matrix[word_map[5][0]], word_map[5][1], MIDNIGHT_COLOR);
@@ -271,23 +428,33 @@ void loop() {
 
   } else {
     switch_hour = hour;
-    set_minutes();
-    set_hour();
+    setMinutes();
+    setHour();
   }
+}
 
+void readLDRs() {
+  raw_daylight_val = analogRead(DAYLIGHT);
+  raw_ambient_val = analogRead(AMBIENT);
+  raw_control_val = analogRead(CONTROL);
 
+  int taget_brightness = map(raw_daylight_val, 0, 1024, 0, MAX_MAXTRIX_BRIGHTNESS);
+  int current_brightness = FastLED.getBrightness();
 
+  if (current_brightness < taget_brightness) {
+    current_brightness++;
+  } else {
+    current_brightness--;
+  }
+  char buffer[40];
+  sprintf(buffer, "Brightness: %d\tTarget: %d", current_brightness, taget_brightness);
+  Serial.println(buffer);
 
-
-
-
-  digitalWrite(ACTIVITY_PIN, LOW);
-  FastLED.show();
-  delay(1000 / FPS);
+  FastLED.setBrightness(current_brightness);
 }
 
 
-void set_hour() {
+void setHour() {
   if (switch_hour > 11) switch_hour -= 12;
   switch (switch_hour) {
     case 0:  //15th word_map element
@@ -347,65 +514,72 @@ void set_hour() {
   }
 }
 
-void set_minutes() {
-  switch (int(minute / 5)) {
-    case 0:  //22nd word_map element, XXX O'CLOCK
-      fill_solid(&led_matrix[word_map[22][0]], word_map[22][1], CHSV(hue, 255, 255));
+void setMinutes() {
+  if (minute_case != int(minute / 5)) {
+    minute_case = int(minute / 5);
+    hue = random(0, 255);
+  }
 
+  switch (minute_case) {
+    case 0:  //22nd word_map element, XXX O'CLOCK
+      fill_solid(&led_matrix[word_map[22][0]], word_map[22][1], CHSV(hue + (1 * 255 / 2), 255, 255));
+      if (explicit_mode_en) {
+        led_matrix[111] = CRGB::Black;
+      }
       break;
     case 1:  //2nd and 4th word_map elements, FIVE PAST XXX
-      fill_solid(&led_matrix[word_map[2][0]], word_map[2][1], CHSV(hue, 255, 255));
-      fill_solid(&led_matrix[word_map[4][0]], word_map[4][1], CHSV(hue, 255, 255));
+      fill_solid(&led_matrix[word_map[2][0]], word_map[2][1], CHSV(hue + (1 * 255 / 3), 255, 255));
+      fill_solid(&led_matrix[word_map[4][0]], word_map[4][1], CHSV(hue + (2 * 255 / 3), 255, 255));
 
       break;
     case 2:  //0th and 4th word_map elements, TEN PAST XXX
-      fill_solid(&led_matrix[word_map[0][0]], word_map[0][1], CHSV(hue, 255, 255));
-      fill_solid(&led_matrix[word_map[4][0]], word_map[4][1], CHSV(hue, 255, 255));
+      fill_solid(&led_matrix[word_map[0][0]], word_map[0][1], CHSV(hue + (1 * 255 / 3), 255, 255));
+      fill_solid(&led_matrix[word_map[4][0]], word_map[4][1], CHSV(hue + (2 * 255 / 3), 255, 255));
 
       break;
     case 3:  //3th and 4th word_map elements, QUATER PAST XXX
-      fill_solid(&led_matrix[word_map[3][0]], word_map[3][1], CHSV(hue, 255, 255));
-      fill_solid(&led_matrix[word_map[4][0]], word_map[4][1], CHSV(hue, 255, 255));
+      fill_solid(&led_matrix[word_map[3][0]], word_map[3][1], CHSV(hue + (1 * 255 / 3), 255, 255));
+      fill_solid(&led_matrix[word_map[4][0]], word_map[4][1], CHSV(hue + (2 * 255 / 3), 255, 255));
 
       break;
     case 4:  //24th word_map element, XXX TWENTY
-      fill_solid(&led_matrix[word_map[24][0]], word_map[24][1], CHSV(hue, 255, 255));
+      fill_solid(&led_matrix[word_map[24][0]], word_map[24][1], CHSV(hue + (1 * 255 / 2), 255, 255));
 
       break;
     case 5:  //24th and 28th word_map elements, XXX TWENTY FIVE
-      fill_solid(&led_matrix[word_map[24][0]], word_map[24][1], CHSV(hue, 255, 255));
-      fill_solid(&led_matrix[word_map[28][0]], word_map[28][1], CHSV(hue, 255, 255));
+      fill_solid(&led_matrix[word_map[24][0]], word_map[24][1], CHSV(hue + (1 * 255 / 3), 255, 255));
+      fill_solid(&led_matrix[word_map[28][0]], word_map[28][1], CHSV(hue + (2 * 255 / 3), 255, 255));
 
       break;
     case 6:  //1st and 4th word_map elements, HALF PAST XXX
-      fill_solid(&led_matrix[word_map[1][0]], word_map[1][1], CHSV(hue, 255, 255));
-      fill_solid(&led_matrix[word_map[4][0]], word_map[4][1], CHSV(hue, 255, 255));
+      fill_solid(&led_matrix[word_map[1][0]], word_map[1][1], CHSV(hue + (1 * 255 / 3), 255, 255));
+      fill_solid(&led_matrix[word_map[4][0]], word_map[4][1], CHSV(hue + (2 * 255 / 3), 255, 255));
 
       break;
     case 7:  //25st and 28th word_map elements, XXX THIRTY FIVE
-      fill_solid(&led_matrix[word_map[25][0]], word_map[25][1], CHSV(hue, 255, 255));
-      fill_solid(&led_matrix[word_map[28][0]], word_map[28][1], CHSV(hue, 255, 255));
+      fill_solid(&led_matrix[word_map[25][0]], word_map[25][1], CHSV(hue + (1 * 255 / 3), 255, 255));
+      fill_solid(&led_matrix[word_map[28][0]], word_map[28][1], CHSV(hue + (2 * 255 / 3), 255, 255));
 
       break;
     case 8:  //23rd word_map element, XXX FORTY
-      fill_solid(&led_matrix[word_map[23][0]], word_map[23][1], CHSV(hue, 255, 255));
+      fill_solid(&led_matrix[word_map[23][0]], word_map[23][1], CHSV(hue + (1 * 255 / 2), 255, 255));
 
       break;
     case 9:  //4th and 7th word_map elements, QUARTER TO YYY
-      fill_solid(&led_matrix[word_map[3][0]], word_map[3][1], CHSV(hue, 255, 255));
-      fill_solid(&led_matrix[word_map[7][0]], word_map[7][1], CHSV(hue, 255, 255));
+      fill_solid(&led_matrix[word_map[3][0]], word_map[3][1], CHSV(hue + (1 * 255 / 3), 255, 255));
+      fill_solid(&led_matrix[word_map[7][0]], word_map[7][1], CHSV(hue + (2 * 255 / 3), 255, 255));
       switch_hour++;
 
       break;
     case 10:  //4th and 7th word_map elements, TEN TO YYY
-      fill_solid(&led_matrix[word_map[0][0]], word_map[0][1], CHSV(hue, 255, 255));
-      fill_solid(&led_matrix[word_map[7][0]], word_map[7][1], CHSV(hue, 255, 255));
+      fill_solid(&led_matrix[word_map[0][0]], word_map[0][1], CHSV(hue + (1 * 255 / 3), 255, 255));
+      fill_solid(&led_matrix[word_map[7][0]], word_map[7][1], CHSV(hue + (2 * 255 / 3), 255, 255));
       switch_hour++;
 
       break;
     case 11:  //4th and 7th word_map elements, FIVE TO YYY
-      fill_solid(&led_matrix[word_map[2][0]], word_map[2][1], CHSV(hue, 255, 255));
-      fill_solid(&led_matrix[word_map[7][0]], word_map[7][1], CHSV(hue, 255, 255));
+      fill_solid(&led_matrix[word_map[2][0]], word_map[2][1], CHSV(hue + (1 * 255 / 3), 255, 255));
+      fill_solid(&led_matrix[word_map[7][0]], word_map[7][1], CHSV(hue + (2 * 255 / 3), 255, 255));
       switch_hour++;
 
       break;
