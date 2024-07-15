@@ -14,7 +14,8 @@ Raspberry Pi Pico/RP2040 3.7.2
 /* to do */
 // setup the LRDs - done!
 // get the colck's alt display mode going - done!! I;m on a rol today!
-// fix the colour pallette stuff
+// fix the colour pallette stuff - meh, sorta working
+// add captouch buttons...
 
 #include <FastLED.h>
 #include <Wire.h>
@@ -427,7 +428,7 @@ void displayWordTime() {
     fill_solid(&led_matrix[word_map[26][0]], word_map[26][1], WEED_COLOR);  //NICE
 
   } else {
-    switch_hour = hour;
+    switch_hour = hour; //11
     setMinutes();
     setHour();
   }
@@ -505,9 +506,13 @@ void setHour() {
       fill_solid(&led_matrix[word_map[11][0]], word_map[11][1], CHSV(hue, 255, 255));
 
       break;
+    case 12:  //15th word_map element
+      fill_solid(&led_matrix[word_map[15][0]], word_map[15][1], CHSV(hue, 255, 255));
+
+      break;
     default:
       char buffer[40];
-      sprintf(buffer, "ERROR: hour= %d", hour);
+      sprintf(buffer, "ERROR: hour= %d", switch_hour);
       led_matrix[85] = CRGB::Red;
       Serial.println(buffer);
       break;
