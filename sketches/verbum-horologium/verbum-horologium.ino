@@ -14,12 +14,15 @@ Raspberry Pi Pico/RP2040 3.7.2
 /* to do */
 // setup the LRDs - done!
 // get the colck's alt display mode going - done!! I;m on a rol today!
-// fix the colour pallette stuff - meh, sorta working
-// add captouch buttons...
+// fix the colour pallette stuff - meh, sorta working, no it's really not...
+// add captouch buttons... - done!
 
 #include <FastLED.h>
 #include <Wire.h>
 #include <RTClib.h>
+#include <Adafruit_CAP1188.h>
+
+Adafruit_CAP1188 cap = Adafruit_CAP1188();
 
 #define DAYLIGHT A0
 #define AMBIENT A1
@@ -31,7 +34,8 @@ Raspberry Pi Pico/RP2040 3.7.2
 #define LED_TYPE WS2812B
 #define COLOR_ORDER GRB
 
-#define MAX_MAXTRIX_BRIGHTNESS 255  //100
+#define MAX_MAXTRIX_BRIGHTNESS 255
+#define MIN_MAXTRIX_BRIGHTNESS 20  //20
 
 const CRGB MIDNIGHT_COLOR = CRGB(0x8000ff);
 const CRGB MIDDAY_COLOR = CRGB(0xffa600);
@@ -53,6 +57,33 @@ uint8_t colorPaletteMode;
 bool state = 0;
 
 uint32_t counter;
+
+bool night_hours[] = {
+  1,  //12am
+  1,  //1am
+  1,  //2am
+  1,  //3am
+  1,  //4am
+  1,  //5am
+  1,  //6am
+  1,  //7am
+  0,  //8am
+  0,  //9am
+  0,  //10am
+  0,  //11am
+  0,  //12pm
+  0,  //1pm
+  0,  //2pm
+  0,  //3pm
+  0,  //4pm
+  0,  //5pm
+  0,  //6pm
+  0,  //7pm
+  0,  //8pm
+  0,  //9pm
+  1,  //10pm
+  1   //11pm
+};
 
 uint8_t word_map[][2] = {
   { 1, 3 },  //TEN            0
@@ -187,10 +218,15 @@ int raw_control_val;
 
 float hue;
 
+bool cap_first_press = true;
+
+uint8_t buttons_touched;
+
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(115200);
   rtc.begin();
+  cap.begin();
   getTime();
   randomSeed(DAYLIGHT);
   FastLED.addLeds<LED_TYPE, LED_MAXTRIX_PIN, COLOR_ORDER>(led_matrix, NUM_MATRIX_LEDS).setCorrection(TypicalLEDStrip);
@@ -253,6 +289,11 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
+  if (cap.touched() != buttons_touched) {
+    buttons_touched = cap.touched();
+    cap_first_press = true;
+  }
+
   counter++;
   if (counter % 100 == 0) {
     readLDRs();
@@ -317,14 +358,108 @@ void loop() {
       mode = 0;
   }
 
+  if (night_hours[hour] == 1 && FastLED.getBrightness() <= MIN_MAXTRIX_BRIGHTNESS) {
+    for (int i = 0; i < NUM_MATRIX_LEDS; i++) {
+      if (i != breath_led_index) {
+        led_matrix[i] = CRGB::Black;
+      }
+    }
+  }
+
   if (state == 1) {
     state = 0;
     led_matrix[breath_led_index] = CRGB::White;
   }
 
+  if (buttons_touched != 0) {
+    do_stuff_with_buttons_pressed(buttons_touched);
+  } else {
+    cap_first_press = true;
+  }
+
   digitalWrite(ACTIVITY_PIN, state);
   FastLED.show();
   delay(1000 / FPS);
+}
+
+void do_stuff_with_buttons_pressed(uint8_t buttons_that_were_pressed) {
+  switch (buttons_that_were_pressed) {
+    case 1:  // Top
+      if (cap_first_press) {
+        cap_first_press = false;
+        mode++;
+        Serial.print("Top");
+        Serial.print('\t');
+        Serial.print("mode: ");
+        Serial.println(mode);
+      }
+      break;
+    case 2:  // Left
+      if (cap_first_press) {
+        cap_first_press = false;
+        Serial.print("Left");
+        Serial.print('\t');
+        Serial.print(": ");
+        Serial.println();
+      }
+      break;
+    case 4:  // Right
+      if (cap_first_press) {
+        cap_first_press = false;
+        Serial.print("Right");
+        Serial.print('\t');
+        Serial.print(": ");
+        Serial.println();
+      }
+      break;
+    case 3:  // Top & Left
+      if (cap_first_press) {
+        cap_first_press = false;
+        Serial.print("Top & Left");
+        Serial.print('\t');
+        Serial.print(": ");
+        Serial.println();
+      }
+      break;
+    case 5:  // Top & Right
+      if (cap_first_press) {
+        cap_first_press = false;
+        Serial.print("Top & Right");
+        Serial.print('\t');
+        Serial.print(": ");
+        Serial.println();
+      }
+      break;
+    case 6:  // Left & Right
+      if (cap_first_press) {
+        cap_first_press = false;
+        explicit_mode_en = !explicit_mode_en;
+        mode = -1;
+
+        if (explicit_mode_en) {
+          led_matrix[85] = WEED_COLOR;
+        } else {
+          led_matrix[85] = CRGB::Orange;
+        }
+
+        Serial.print("Left & Right");
+        Serial.print('\t');
+        Serial.print("explicit_mode_en: ");
+        Serial.println(explicit_mode_en);
+      }
+      break;
+    case 7:  // Top & Left & Right
+      if (cap_first_press) {
+        cap_first_press = false;
+        Serial.print("Top & Left & Right");
+        Serial.print('\t');
+        Serial.print(": ");
+        Serial.println();
+      }
+      break;
+    default:  // Error
+      Serial.println("Error");
+  }
 }
 
 void displayDigitalTime(bool _12h_enable) {
@@ -428,7 +563,7 @@ void displayWordTime() {
     fill_solid(&led_matrix[word_map[26][0]], word_map[26][1], WEED_COLOR);  //NICE
 
   } else {
-    switch_hour = hour; //11
+    switch_hour = hour;  //11
     setMinutes();
     setHour();
   }
@@ -445,7 +580,7 @@ void readLDRs() {
   if (current_brightness < taget_brightness) {
     current_brightness++;
   } else {
-    current_brightness--;
+    if (current_brightness > MIN_MAXTRIX_BRIGHTNESS) current_brightness--;
   }
   char buffer[40];
   sprintf(buffer, "Brightness: %d\tTarget: %d", current_brightness, taget_brightness);
