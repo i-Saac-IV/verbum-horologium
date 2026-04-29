@@ -1,6 +1,6 @@
 # Files to ignore
-*.epf
-*.s#*
-*.b#*
-TEMPLATE.ino
-cheat_sheet.txt
+/.pio
+/.vscode
+/test
+compile_commands.json
+verbum-horologium.code-workspace
