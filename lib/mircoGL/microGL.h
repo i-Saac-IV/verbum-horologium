@@ -19,5 +19,6 @@ void microGL_drawRectangle(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2, CRGB 
 void microGL_fillRectangle(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2, CRGB color);
 void microGL_drawBitmap(uint8_t x, uint8_t y, const unsigned char* bitmap, uint8_t w, uint8_t h, CRGB color);
 void microGL_draw4x6Digit(uint8_t x, uint8_t y, uint8_t digit, CRGB color);
+void microGL_draw3x5Digit(uint8_t x, uint8_t y, uint8_t digit, CRGB color);
 
 #endif /* INC_MICROGL_H_ */

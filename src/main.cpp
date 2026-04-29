@@ -15,6 +15,7 @@ Repo:   https://github.com/i-Saac-IV/verbum-horologium
 #include <bitmaps.h>
 #include <word_layout.h>
 #include <digital_clock.h>
+#include <staircase_clock.h>
 
 void setup() {
     task_scheduler_init();
@@ -28,7 +29,7 @@ void loop() {
     task_scheduler_executeEnabledTasks();
     display_fill(CRGB::Black);
     
-    digital_clock_displayTime();
+    staircase_clock_displayTime();
 
     display_show();
 }

@@ -149,19 +149,15 @@ void microGL_drawBitmap(uint8_t x, uint8_t y, const unsigned char* bitmap, uint8
 }
 
 void microGL_draw4x6Digit(uint8_t x, uint8_t y, uint8_t digit, CRGB color) {
-    const uint8_t* bitmap = 0;
-    switch (digit) {
-        case 0: bitmap = number_zero_4x6; break;
-        case 1: bitmap = number_one_4x6; break;
-        case 2: bitmap = number_two_4x6; break;
-        case 3: bitmap = number_three_4x6; break;
-        case 4: bitmap = number_four_4x6; break;
-        case 5: bitmap = number_five_4x6; break;
-        case 6: bitmap = number_six_4x6; break;
-        case 7: bitmap = number_seven_4x6; break;
-        case 8: bitmap = number_eight_4x6; break;
-        case 9: bitmap = number_nine_4x6; break;
-        default: return;
+    if (digit > 9) {
+        return;
     }
-    microGL_drawBitmap(x, y, bitmap, 4, 6, color);
+    microGL_drawBitmap(x, y, digits_4x6[digit], 4, 6, color);
+}
+
+void microGL_draw3x5Digit(uint8_t x, uint8_t y, uint8_t digit, CRGB color) {
+    if (digit > 9) {
+        return;
+    }
+    microGL_drawBitmap(x, y, digits_3x5[digit], 3, 5, color);
 }
