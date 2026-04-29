@@ -37,6 +37,6 @@ void loop() {
         i++;
         c = millis() + 1000;
     }
-    microGL_drawBitmap(7, 6, number_one_4x6, 4, 6, CHSV(250, 255, 255));
+    microGL_draw4x6Digit(7, 6, 1, CHSV(250, 255, 255));
     display_show();
 }
