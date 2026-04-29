@@ -14,6 +14,7 @@ Repo:   https://github.com/i-Saac-IV/verbum-horologium
 #include <microGL.h>
 #include <bitmaps.h>
 #include <word_layout.h>
+#include <digital_clock.h>
 
 void setup() {
     task_scheduler_init();
@@ -22,21 +23,12 @@ void setup() {
     task_scheduler_enableTask(READ_DAYLIGHT_SENSORS);
     display_init();
 }
-uint8_t i = 0;
-uint32_t c = 0;
+
 void loop() {
     task_scheduler_executeEnabledTasks();
     display_fill(CRGB::Black);
-    microGL_drawPixel(0, 0, CHSV(0, 255, 255));
-    microGL_drawLine(0, 2, 10, 7, CHSV(50, 255, 255));
-    microGL_drawRectangle(4, 3, 7, 9, CHSV(100, 255, 255));
-    microGL_drawCircle(5, 5, 3, CHSV(150, 255, 255));
-    microGL_drawBitmap(0, 0, circle_12x12, 12, 12, CHSV(200, 255, 255));
-    word_layout_drawWord((words)(i % NUM_WORDS), CRGB::White);
-    if (millis() > c) {
-        i++;
-        c = millis() + 1000;
-    }
-    microGL_draw4x6Digit(7, 6, 1, CHSV(250, 255, 255));
+    
+    digital_clock_displayTime();
+
     display_show();
 }
