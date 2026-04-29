@@ -7,7 +7,6 @@ Date:   28-04-2026
 */
 
 #include "rtc.h"
-#include <RTClib.h>
 
 RTC_DS3231 rtc;
 DateTime now;
@@ -44,10 +43,6 @@ void rtc_setDate(uint16_t year, uint8_t month, uint8_t day) {
     ));
 }
 
-uint8_t rtc_getHour(void) {
-    return now.hour();
-}
-
-uint8_t rtc_getMinute(void) {
-    return now.minute();
+DateTime rtc_getTime(void) {
+    return now;
 }
