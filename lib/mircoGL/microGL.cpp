@@ -8,16 +8,6 @@ Date:   28-04-2026
 
 #include "microGL.h"
 
-typedef struct {
-    uint8_t cursorX;
-    uint8_t cursorY;
-} display_t;
-
-display_t display {
-    .cursorX = 0,
-    .cursorY = 0
-};
-
 void microGL_drawPixel(uint8_t x, uint8_t y, CRGB color) {
     display_setPixel(x, y, color);
 }
@@ -47,7 +37,6 @@ void microGL_drawLine(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2, CRGB color
         }
     }
 }
-
 
 void microGL_drawCircle(uint8_t par_x, uint8_t par_y, uint8_t par_r, CRGB color) {
     /* Draw circle by Bresenhem's algorithm */
@@ -135,52 +124,25 @@ void microGL_fillRectangle(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2, CRGB 
     }
 }
 
-char microGL_writeChar(char ch, Font_t Font, CRGB color) {
-    uint32_t i, b, j;
-    
-    // Check if character is valid
-    if (ch < 32 || ch > 126)
-        return 0;
-    
-    // Check remaining space on current line
-    if (MAXTRIX_WIDTH < (display.cursorX + Font.width) ||
-        MAXTRIX_HEIGHT < (display.cursorY + Font.height))
-    {
-        // Not enough space on current line
-        return 0;
+void microGL_drawBitmap(uint8_t x, uint8_t y, const unsigned char* bitmap, uint8_t w, uint8_t h, CRGB color) {
+    int16_t byteWidth = (w + 7) / 8;
+    uint8_t byte = 0;
+
+    if (x >= MAXTRIX_WIDTH || y >= MAXTRIX_HEIGHT) {
+        return;
     }
-    
-    // Use the font to write
-    for(i = 0; i < Font.height; i++) {
-        b = Font.data[(ch - 32) * Font.height + i];
-        for(j = 0; j < Font.width; j++) {
-            if((b << j) & 0x8000)  {
-                microGL_drawPixel(display.cursorX + j, (display.cursorY + i), color);
+
+    for (uint8_t j = 0; j < h; j++, y++) {
+        for (uint8_t i = 0; i < w; i++) {
+            if (i & 7) {
+                byte <<= 1;
+            } else {
+                byte = (*(const unsigned char *)(&bitmap[j * byteWidth + i / 8]));
+            }
+
+            if (byte & 0x80) {
+                microGL_drawPixel(x + i, y, color);
             }
         }
     }
-    
-    // The current space is now taken
-    display.cursorX += Font.char_width ? Font.char_width[ch - 32] : Font.width;
-    
-    // Return written char for validation
-    return ch;
-}
-
-char microGL_writeString(char* str, Font_t Font, CRGB color) {
-    while (*str) {
-        if (microGL_writeChar(*str, Font, color) != *str) {
-            // Char could not be written
-            return *str;
-        }
-        str++;
-    }
-    
-    // Everything ok
-    return *str;
-}
-
-void microGL_setCursor(uint8_t x, uint8_t y) {
-    display.cursorX = x;
-    display.cursorY = y;
 }
