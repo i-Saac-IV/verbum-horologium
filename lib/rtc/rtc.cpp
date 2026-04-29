@@ -13,6 +13,7 @@ DateTime now;
 
 void rtc_init(void) {
     rtc.begin();
+    rtc_read();
 }
 
 void rtc_read(void) {
