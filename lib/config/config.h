@@ -10,6 +10,7 @@ Date:   01-05-2026
 #define INC_CONFIG_H_
 
 #include <stdint.h>
+#include <stdbool.h>
 
 typedef enum {
     TIME_FORMAT_12H = 0,
@@ -25,15 +26,5 @@ typedef struct {
     time_format_t time_format; 
     bool enable_demo;
 } config_t;
-
-config_t config = {
-    .display_mode = 0,
-    .color_palette = 0,
-    .nightMode_start = 19,
-    .nightMode_end = 7,
-    .auto_sleep = 1,
-    .time_format = TIME_FORMAT_12H,
-    .enable_demo = 1
-};
 
 #endif /* INC_CONFIG_H_ */
