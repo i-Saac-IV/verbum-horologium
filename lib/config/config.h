@@ -27,4 +27,6 @@ typedef struct {
     bool enable_demo;
 } config_t;
 
+extern config_t config;
+
 #endif /* INC_CONFIG_H_ */

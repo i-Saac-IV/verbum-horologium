@@ -21,7 +21,7 @@ Repo:   https://github.com/i-Saac-IV/verbum-horologium
 void setup() {
     task_scheduler_init();
     task_scheduler_initAllTasks();
-    //task_scheduler_enableTask(SERIAL_PRINT);
+    task_scheduler_enableTask(SERIAL_PRINT);
     task_scheduler_enableTask(READ_DAYLIGHT_SENSORS);
     task_scheduler_enableTask(READ_BUTTONS);
     display_init();

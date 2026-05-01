@@ -9,9 +9,13 @@ Date:   28-04-2026
 #include "digital_clock.h"
 
 #include "microGL.h"
+#include "config.h"
 #include "rtc.h"
 
 void digital_clock_drawHours(uint8_t hour) {
+    if (config.time_format == TIME_FORMAT_12H) {
+        hour = (hour % 12 == 0) ? 12 : hour % 12;
+    }
     microGL_draw4x6Digit(1, 0, hour / 10, CRGB::Red);
     microGL_draw4x6Digit(7, 0, hour % 10, CRGB::Red);
 }
