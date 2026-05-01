@@ -24,8 +24,8 @@ typedef struct Task {
 #include "serial.h"
 #include "daylight_sensor.h"
 #include "rtc.h"
+#include "buttons.h"
 
-// check how to actually reference the functions!
 static Task_t tasks[TASK_COUNT] = {
 
     [SERIAL_PRINT] = {
@@ -50,10 +50,16 @@ static Task_t tasks[TASK_COUNT] = {
         .frequency = READ_RTC_FREQUENCY_HZ,
         .enabled = true,
         .persistent = true
+    },
+
+    [READ_BUTTONS] = {
+        .taskFunction = buttons_update,
+        .taskInitFunction = buttons_init,
+        .frequency = READ_BUTTONS_FREQUENCY_HZ,
+        .enabled = true,
+        .persistent = true
     }
 };
-
-/* end of task struct definitions */
 
 static uint32_t ticks = 0;
 
