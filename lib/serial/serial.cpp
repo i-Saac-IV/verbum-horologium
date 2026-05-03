@@ -16,7 +16,8 @@ void serial_printf(const char *format, ...);
 #include "rtc.h"
 
 void serial_taskPrint() {
-    serial_printf("Front: %d\tDisplay: %d\tPCB: %d\n", daylight_sensor_getBrightness(FRONT_SENSOR), daylight_sensor_getBrightness(DISPLAY_SENSOR), daylight_sensor_getBrightness(PCB_SENSOR));
+    serial_printf("Front: %d\tDisplay: %d\tPCB: %d\n", daylight_sensor_getRawBrightness(FRONT_SENSOR), daylight_sensor_getRawBrightness(DISPLAY_SENSOR), daylight_sensor_getRawBrightness(PCB_SENSOR));
+    serial_printf("Front: %d\tDisplay: %d\tPCB: %d\n", daylight_sensor_getScaledBrightness(FRONT_SENSOR), daylight_sensor_getScaledBrightness(DISPLAY_SENSOR), daylight_sensor_getScaledBrightness(PCB_SENSOR));
     DateTime now = rtc_getTime();
     serial_printf("Time: %02u:%02u\n", now.hour(), now.minute());
 }

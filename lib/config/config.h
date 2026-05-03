@@ -22,6 +22,8 @@ typedef struct {
     uint8_t color_palette;
     uint8_t nightMode_start;
     uint8_t nightMode_end;
+    uint8_t min_brightness;
+    uint8_t max_brightness;
     bool auto_sleep;
     time_format_t time_format; 
     bool enable_demo;

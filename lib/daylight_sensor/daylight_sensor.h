@@ -11,10 +11,6 @@ Date:   28-04-2026
 
 #include <Arduino.h>
 
-#define FRONT_SENSOR_PIN    A0
-#define DISPLAY_SENSOR_PIN  A1
-#define PCB_SENSOR_PIN      A2
-
 typedef enum {
     FRONT_SENSOR = 0,
     DISPLAY_SENSOR,
@@ -24,6 +20,7 @@ typedef enum {
 
 void daylight_sensor_init(void);
 void daylight_sensor_readAllSensors(void);
-uint16_t daylight_sensor_getBrightness(daylight_sensor_t sensor);
+uint16_t daylight_sensor_getRawBrightness(daylight_sensor_t s);
+uint8_t daylight_sensor_getScaledBrightness(daylight_sensor_t s);
 
 #endif /* INC_DAYLIGHT_SENSOR_H_ */

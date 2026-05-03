@@ -13,7 +13,9 @@ config_t config = {
     .color_palette = 0,
     .nightMode_start = 19,
     .nightMode_end = 7,
+    .min_brightness = 23,
+    .max_brightness = 213,
     .auto_sleep = 1,
     .time_format = TIME_FORMAT_12H,
-    .enable_demo = 1,
+    .enable_demo = 1
 };
