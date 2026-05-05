@@ -7,17 +7,22 @@ Date:   28-04-2026
 */
 
 #include "display.h"
+#include "config.h"
+#include "daylight_sensor.h"
 
 CRGB led_matrix[NUM_MATRIX_LEDS];
 
+uint8_t brightness = config.max_brightness / 2;
+
 void display_init(void) {
     FastLED.addLeds<LED_TYPE, LED_MAXTRIX_PIN, COLOR_ORDER>(led_matrix, NUM_MATRIX_LEDS).setCorrection(TypicalLEDStrip);
-    display_setBrightnessPercent(0);
+    display_updateBrightness();
     display_fill(CRGB::Black);
     display_show();
 }
 
 void display_show(void) {
+    display_updateBrightness();
     FastLED.show();
 }
 
@@ -37,20 +42,12 @@ void display_setPixel(uint8_t x, uint8_t y, CRGB color) {
     }
 }
 
-void display_setBrightness(uint8_t brightness) {
-    if (brightness > MAX_MAXTRIX_BRIGHTNESS) {
-        FastLED.setBrightness(MAX_MAXTRIX_BRIGHTNESS);
-    } else if (brightness < MIN_MAXTRIX_BRIGHTNESS) {
-        FastLED.setBrightness(MIN_MAXTRIX_BRIGHTNESS);
-    } else {
-        FastLED.setBrightness(brightness);
+void display_updateBrightness(void) {
+    uint8_t target_brightness = daylight_sensor_getScaledBrightness(FRONT_SENSOR);
+    if (brightness < target_brightness) {
+        brightness++;
+    } else if (brightness > target_brightness) {
+        brightness--;
     }
-}
-
-void display_setBrightnessPercent(uint8_t percent) {
-    if (percent > 100) {
-        percent = 100;
-    }
-    uint8_t brightness = MIN_MAXTRIX_BRIGHTNESS + ((uint32_t)percent * (MAX_MAXTRIX_BRIGHTNESS - MIN_MAXTRIX_BRIGHTNESS)) / 100;
-    display_setBrightness(brightness);
+    FastLED.setBrightness(brightness);
 }

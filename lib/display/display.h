@@ -25,6 +25,6 @@ void display_init(void);
 void display_show(void);
 void display_fill(CRGB color);
 void display_setPixel(uint8_t x, uint8_t y, CRGB color);
-void display_setBrightnessPercent(uint8_t percent);
+void display_updateBrightness(void);
 
 #endif /* INC_DISPLAY_H_ */
