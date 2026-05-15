@@ -26,7 +26,7 @@ A digital clock that display time in an analog fashion.
 <table align="center">
   <tr>
     <td align="center">
-      <img src="./photos/VID_20250811_162947_325.gif"><br>
+      <img src="./photos/VID_20250811_162947_325.gif" height="400"><br>
       <b>Breif clock demo</b>
     </td>
   </tr>
