@@ -11,7 +11,7 @@ A digital clock that displays time in an analog fashion.
   - [Printed Circuit Board](#printed-circuit-board)
   - [Code](#code)
     - [Dependencies](#dependencies)
-- [Copyright and Licencing](#copyright-and-licencing)
+- [Copyright and Licensing](#copyright-and-licensing)
 - [Contact](#contact)
 
 # Features
@@ -81,8 +81,7 @@ For programming of the Raspberry Pi Pico W via the Arduino IDE I've included the
 Open the Arduino IDE, install the code and board libraries mentioned above, plug in your mainboard, and upload the code.
 
 # Copyright and Licensing
-
-See [licence](LICENSE) for in depth info.
+See [license](LICENSE) for in depth info.
 
 This project uses the following third-party libraries:
 
