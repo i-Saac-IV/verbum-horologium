@@ -4,9 +4,8 @@ A digital clock that display time in an analog fashion.
 # Table of Contents
 - [Features](#features)
 - [Fixes and Updates](#fixes-and-updates)
-- [Pictures](#pictures)
+- [Pictures and Video](#pictures-and-video)
 - [Hardware and Setup](#hardware-and-setup)
-  - [Schematic](#schematic)
   - [Printed Circuit Board](#printed-circuit-board)
   - [Code](#code)
     - [Dependencies](#dependencies)
@@ -23,7 +22,15 @@ A digital clock that display time in an analog fashion.
 > [!IMPORTANT]
 > This project is currently under development undergoing a major code refactor. Please bear with me while I work on improving functionality.
 
-# Pictures
+# Pictures and Video
+<table align="center">
+  <tr>
+    <td align="center">
+      <img src="./photos/VID_20250811_162947_325.gif"><br>
+      <b>Breif clock demo</b>
+    </td>
+  </tr>
+</table>
 <table align="center">
   <tr>
     <td align="center">
@@ -52,7 +59,6 @@ A digital clock that display time in an analog fashion.
     </td>
   </tr>
 </table>
-Checkout the video demo [here!](/photos/VID_20250811_162947_325.mp4)
 
 # Hardware and Setup
 
@@ -87,3 +93,18 @@ Copyright and license terms belong to their respective authors.
 Contact me should any of this be wrong.
 
 # Contact
+If you'd like to get in touch, feel free to reach out!
+<p>
+  <a href="https://github.com/i-Saac-IV">
+    <img src="https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white"/>
+  </a>
+  <a href="https://www.linkedin.com/in/isaac-pawley/">
+    <img src="https://img.shields.io/badge/LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white"/>
+  </a>
+  <a href="https://www.instagram.com/i.saac.0100/">
+    <img src="https://img.shields.io/badge/Instagram-E4405F?style=for-the-badge&logo=instagram&logoColor=white"/>
+  </a>
+  <a href="mailto:75295202+i-Saac-IV@users.noreply.github.com">
+    <img src="https://img.shields.io/badge/Gmail-D14836?style=for-the-badge&logo=gmail&logoColor=white"/>
+  </a>
+</p>
