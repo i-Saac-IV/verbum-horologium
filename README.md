@@ -6,6 +6,8 @@ A digital clock that displays time in an analog fashion.
 - [Fixes and Updates](#fixes-and-updates)
 - [Pictures and Video](#pictures-and-video)
 - [Hardware and Setup](#hardware-and-setup)
+  - [Laser Cut Housing](#laser-cut-housing)
+  - [3D Printed Framing](#3d-printed-framing)
   - [Printed Circuit Board](#printed-circuit-board)
   - [Code](#code)
     - [Dependencies](#dependencies)
