@@ -1,5 +1,5 @@
 # Verbum Horologium
-A digital clock that display time in an analog fashion
+A digital clock that display time in an analog fashion.
 
 # Table of Contents
 - [Features](#features)
@@ -10,6 +10,8 @@ A digital clock that display time in an analog fashion
   - [Printed Circuit Board](#printed-circuit-board)
   - [Code](#code)
     - [Dependencies](#dependencies)
+- [Copyright and Licencing](#copyright-and-licencing)
+- [Contact](#contact)
 
 # Features
 - Invisable capivtive touch buttons, for user input.
@@ -50,6 +52,7 @@ A digital clock that display time in an analog fashion
     </td>
   </tr>
 </table>
+Checkout the video demo [here!](/photos/VID_20250811_162947_325.mp4)
 
 # Hardware and Setup
 
@@ -68,7 +71,7 @@ For programming of the Raspberry Pi Pico W via the Arduino IDE I've included the
 
 Open the Arduino IDE, install the code and board libraries mentioned above, plug in your mainboard and **Upload** the code.
 
-# Copyright and licencing
+# Copyright and Licencing
 
 See [licence](LICENSE) for in depth info.
 
@@ -83,3 +86,4 @@ Copyright and license terms belong to their respective authors.
 
 Contact me should any of this be wrong.
 
+# Contact
