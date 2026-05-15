@@ -34,18 +34,6 @@ A digital clock that display time in an analog fashion.
 <table align="center">
   <tr>
     <td align="center">
-      <img src="./photos/DSC00059.jpg" height="1000"><br>
-      <b>Analog time display</b>
-    </td>
-    <td align="center">
-      <img src="./photos/DSC00060.jpg" height="1000"><br>
-      <b>Digital time display</b>
-    </td>
-  </tr>
-</table>
-<table align="center">
-  <tr>
-    <td align="center">
       <img src="./photos/DSC00020.jpg" height="1000"><br>
       <b>Main control board</b>
     </td>
