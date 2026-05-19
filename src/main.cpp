@@ -19,6 +19,8 @@ Repo:   https://github.com/i-Saac-IV/verbum-horologium
 #include "buttons.h"
 #include "config.h"
 #include "word_clock.h"
+#include "main_fsm.h"
+#include "renderer.h"
 
 void setup() {
     task_scheduler_init();
@@ -27,35 +29,13 @@ void setup() {
     task_scheduler_enableTask(READ_DAYLIGHT_SENSORS);
     task_scheduler_enableTask(READ_BUTTONS);
     display_init();
+
+    buttons_init();
+    
 }
 
 void loop() {
-    task_scheduler_executeEnabledTasks();
-    display_fill(CRGB::Black);
-    
-    if (buttons_getEvent(BTN_LEFT) == BTN_EVENT_SHORT_PRESS) {
-        config.display_mode--;
-    } else if (buttons_getEvent(BTN_RIGHT) == BTN_EVENT_SHORT_PRESS) {
-        config.display_mode++;
-    }
-    
-    if (buttons_getPressed(BTN_TOP) == BTN_EVENT_DOWN) {
-        display_fill(CRGB::Purple);
-    }
-
-    if (buttons_getEvent(BTN_TOP) == BTN_EVENT_SHORT_PRESS) {
-        display_fill(CRGB::Red);
-    }
-
-    if (config.display_mode == 0) {
-        staircase_clock_displayTime();
-    } else if (config.display_mode == 1) {
-        digital_clock_displayTime();
-    } else if (config.display_mode == 2) {
-        word_clock_displayTime();
-    } else {
-        // do nothing.
-    }
-
-    display_show();
+    buttons_update();
+    fsm_update();
+    renderer_update();
 }

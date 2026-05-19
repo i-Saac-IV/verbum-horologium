@@ -7,31 +7,33 @@ Date:   28-04-2026
 */
 
 #include "buttons.h"
+#include "event_manager.h"
+
 #include <Arduino.h>
 #include <Adafruit_CAP1188.h>
+
+#define LONG_PRESS_MS 800
 
 Adafruit_CAP1188 cap = Adafruit_CAP1188();
 
 typedef struct {
-    bool currently_pressed;
     uint32_t press_start;
-    button_event_t pending_event;
-    bool long_press_sent;
-    bool timeout_sent;
 } button_t;
 
 static button_t buttons[NUM_BUTTONS];
 static uint8_t last_touched = 0;
 
+static const inputSource_t button_sources[NUM_BUTTONS] = {
+    INPUT_SOURCE_BUTTON_TOP,
+    INPUT_SOURCE_BUTTON_LEFT,
+    INPUT_SOURCE_BUTTON_RIGHT
+};
+
 void buttons_init(void) {
     cap.begin();
 
     for (uint8_t i = 0; i < NUM_BUTTONS; i++) {
-        buttons[i].currently_pressed = false;
         buttons[i].press_start = 0;
-        buttons[i].pending_event = BUTTON_EVENT_NONE;
-        buttons[i].long_press_sent = false;
-        buttons[i].timeout_sent = false;
     }
 }
 
@@ -48,47 +50,37 @@ void buttons_update(void) {
 
         button_t *btn = &buttons[i];
 
-        // ---------- NEW PRESS (RISING EDGE) ----------
+        /* ---------- PRESS START ---------- */
+
         if (is_pressed && !was_pressed) {
-            btn->currently_pressed = true;
+
             btn->press_start = now;
 
-            btn->long_press_sent = false;
-            btn->timeout_sent = false;
-
-            btn->pending_event = BUTTON_EVENT_SHORT_PRESS;
+            event_manager_push((inputEvent_t) {
+                .type   = INPUT_EVENT_DOWN,
+                .source = button_sources[i]
+            });
         }
 
-        // ---------- HELD ----------
-        if (is_pressed && was_pressed) {
+        /* ---------- RELEASE ---------- */
+
+        if (!is_pressed && was_pressed) {
+
             uint32_t held = now - btn->press_start;
 
-            if (held >= PRESS_TIMEOUT_MS && !btn->timeout_sent) {
-                btn->pending_event = BUTTON_EVENT_TIMEOUT;
-                btn->timeout_sent = true;
-            }
-            else if (held >= LONG_PRESS_MS && !btn->long_press_sent) {
-                btn->pending_event = BUTTON_EVENT_LONG_PRESS;
-                btn->long_press_sent = true;
-            }
-        }
+            event_manager_push((inputEvent_t) {
+                .type = (held >= LONG_PRESS_MS)
+                        ? INPUT_EVENT_LONG_PRESS
+                        : INPUT_EVENT_SHORT_PRESS,
+                .source = button_sources[i]
+            });
 
-        // ---------- RELEASE ----------
-        if (!is_pressed && was_pressed) {
-            btn->currently_pressed = false;
+            event_manager_push((inputEvent_t) {
+                .type   = INPUT_EVENT_UP,
+                .source = button_sources[i]
+            });
         }
     }
 
     last_touched = touched;
-}
-
-button_event_t buttons_getEvent(button_id_t button) {
-    if (button >= NUM_BUTTONS) {
-        return BUTTON_EVENT_NONE;
-    }
-
-    button_event_t event = buttons[button].pending_event;
-    buttons[button].pending_event = BUTTON_EVENT_NONE;
-
-    return event;
 }
