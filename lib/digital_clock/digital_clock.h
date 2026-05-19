@@ -1,6 +1,6 @@
 /*
 
-File:   digial_clock.h
+File:   digital_clock.h
 Author: Isaac Pawley
 Date:   29-04-2026
 
