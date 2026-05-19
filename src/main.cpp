@@ -35,6 +35,7 @@ void setup() {
 }
 
 void loop() {
+    task_scheduler_executeEnabledTasks();
     buttons_update();
     fsm_update();
     renderer_update();

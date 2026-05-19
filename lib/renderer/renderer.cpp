@@ -7,32 +7,39 @@ Date:   19-05-2026
 */
 
 #include "renderer.h"
-#include "event_manager.h"
+#include "display.h"
+#include "main_fsm.h"
 #include <Arduino.h>
 
-static const char *source_names[] = {
-    "TOP",
-    "LEFT",
-    "RIGHT"
-};
-
-static const char *event_names[] = {
-    "NONE",
-    "DOWN",
-    "UP",
-    "SHORT",
-    "LONG"
-};
+#include "word_clock.h"
+#include "staircase_clock.h"
+#include "digital_clock.h"
 
 void renderer_update(void) {
     inputEvent_t event;
 
     while (event_manager_popUI(&event)) {
-        Serial.print("[UI ] ");
 
-        Serial.print(source_names[event.source]);
-        Serial.print(" -> ");
-
-        Serial.println(event_names[event.type]);
     }
+
+    Serial.println(g_app.screen);
+
+    switch(g_app.screen) {
+        case SCREEN_WORD:
+            word_clock_displayTime();
+            break;
+
+        case SCREEN_STAIRCASE:
+            staircase_clock_displayTime();
+            break;
+
+        case SCREEN_DIGITAL:
+            digital_clock_displayTime();
+            break;
+
+        default:
+            break;
+    }
+    display_show();
 }
+
