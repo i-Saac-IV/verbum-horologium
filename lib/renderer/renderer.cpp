@@ -9,7 +9,6 @@ Date:   19-05-2026
 #include "renderer.h"
 #include "display.h"
 #include "main_fsm.h"
-#include <Arduino.h>
 
 #include "word_clock.h"
 #include "staircase_clock.h"
@@ -24,7 +23,9 @@ void renderer_update(void) {
     inputEvent_t event;
 
     while (event_manager_popUI(&event)) {
-
+        if (event.type == INPUT_EVENT_DOWN) {
+            display_setPixel(1, 7, CRGB::White); // put real button reaction here...
+        }
     }
 
     switch(g_app.screen) {
