@@ -15,14 +15,17 @@ Date:   19-05-2026
 #include "staircase_clock.h"
 #include "digital_clock.h"
 
+void renderer_init(void) {
+    display_init();
+}
+
 void renderer_update(void) {
+    display_fill(CRGB::Black);
     inputEvent_t event;
 
     while (event_manager_popUI(&event)) {
 
     }
-
-    Serial.println(g_app.screen);
 
     switch(g_app.screen) {
         case SCREEN_WORD:

@@ -25,6 +25,8 @@ typedef struct Task {
 #include "daylight_sensor.h"
 #include "rtc.h"
 #include "buttons.h"
+#include "main_fsm.h"
+#include "renderer.h"
 
 static Task_t tasks[TASK_COUNT] = {
 
@@ -56,6 +58,22 @@ static Task_t tasks[TASK_COUNT] = {
         .taskFunction = buttons_update,
         .taskInitFunction = buttons_init,
         .frequency = READ_BUTTONS_FREQUENCY_HZ,
+        .enabled = true,
+        .persistent = true
+    },
+
+    [UPDATE_RENDERER] = {
+        .taskFunction = renderer_update,
+        .taskInitFunction = renderer_init,
+        .frequency = UPDATE_RENDERER_FREQUENCY_HZ,
+        .enabled = true,
+        .persistent = true
+    },
+
+    [UPDATE_FSM] = {
+        .taskFunction = fsm_update,
+        .taskInitFunction = fsm_init,
+        .frequency = UPDATE_FSM_FREQUENCY_HZ,
         .enabled = true,
         .persistent = true
     }

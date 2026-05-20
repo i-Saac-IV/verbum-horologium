@@ -60,6 +60,10 @@ static const Transition_t app_table[] = {
     },
 };
 
+void fsm_init(void) {
+    // Nothing to init
+}
+
 void fsm_update(void) {
     inputEvent_t ev;
 

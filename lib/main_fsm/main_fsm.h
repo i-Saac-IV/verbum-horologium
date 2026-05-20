@@ -37,6 +37,7 @@ typedef struct {
 
 extern AppState_t g_app;
 
+void fsm_init(void);
 void fsm_update(void);
 void action_next_screen(AppState_t* app);
 void action_prev_screen(AppState_t* app);

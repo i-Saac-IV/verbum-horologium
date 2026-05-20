@@ -92,55 +92,55 @@ void word_clock_drawHours(uint8_t hour) {
 
     switch (hour) {
         case 0:
-            word_layout_drawWord(WORD_MIDNIGHT, CHSV(0, 255, 255));
+            word_layout_drawWord(WORD_MIDNIGHT, CHSV(60, 255, 255));
             break;
 
         case 1:
-            word_layout_drawWord(WORD_ONE_HOUR, CHSV(0, 255, 255));
+            word_layout_drawWord(WORD_ONE_HOUR, CHSV(60, 255, 255));
             break;
 
         case 2:
-            word_layout_drawWord(WORD_TWO_HOUR, CHSV(0, 255, 255));
+            word_layout_drawWord(WORD_TWO_HOUR, CHSV(60, 255, 255));
             break;
 
         case 3:
-            word_layout_drawWord(WORD_THREE_HOUR, CHSV(0, 255, 255));
+            word_layout_drawWord(WORD_THREE_HOUR, CHSV(60, 255, 255));
             break;
 
         case 4:
-            word_layout_drawWord(WORD_FOUR_HOUR, CHSV(0, 255, 255));
+            word_layout_drawWord(WORD_FOUR_HOUR, CHSV(60, 255, 255));
             break;
 
         case 5:
-            word_layout_drawWord(WORD_FIVE_HOUR, CHSV(0, 255, 255));
+            word_layout_drawWord(WORD_FIVE_HOUR, CHSV(60, 255, 255));
             break;
 
         case 6:
-            word_layout_drawWord(WORD_SIX_HOUR, CHSV(0, 255, 255));
+            word_layout_drawWord(WORD_SIX_HOUR, CHSV(60, 255, 255));
             break;
 
         case 7:
-            word_layout_drawWord(WORD_SEVEN_HOUR, CHSV(0, 255, 255));
+            word_layout_drawWord(WORD_SEVEN_HOUR, CHSV(60, 255, 255));
             break;
 
         case 8:
-            word_layout_drawWord(WORD_EIGHT_HOUR, CHSV(0, 255, 255));
+            word_layout_drawWord(WORD_EIGHT_HOUR, CHSV(60, 255, 255));
             break;
 
         case 9:
-            word_layout_drawWord(WORD_NINE_HOUR, CHSV(0, 255, 255));
+            word_layout_drawWord(WORD_NINE_HOUR, CHSV(60, 255, 255));
             break;
 
         case 10:
-            word_layout_drawWord(WORD_TEN_HOUR, CHSV(0, 255, 255));
+            word_layout_drawWord(WORD_TEN_HOUR, CHSV(60, 255, 255));
             break;
 
         case 11:
-            word_layout_drawWord(WORD_ELEVEN_HOUR, CHSV(0, 255, 255));
+            word_layout_drawWord(WORD_ELEVEN_HOUR, CHSV(60, 255, 255));
             break;
 
         case 12:
-            word_layout_drawWord(WORD_MIDDAY, CHSV(0, 255, 255));
+            word_layout_drawWord(WORD_TWELVE_HOUR, CHSV(60, 255, 255));
             break;
 
         default:
