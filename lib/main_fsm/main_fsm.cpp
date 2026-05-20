@@ -35,10 +35,24 @@ static const Transition_t app_table[] = {
         action_next_screen
     },
 
+    {
+        MODE_NORMAL,
+        {INPUT_EVENT_LONG_PRESS, INPUT_SOURCE_BUTTON_RIGHT},
+        MODE_NORMAL,
+        action_next_screen
+    },
+
     // previous screen
     {
         MODE_NORMAL,
         {INPUT_EVENT_SHORT_PRESS, INPUT_SOURCE_BUTTON_LEFT},
+        MODE_NORMAL,
+        action_prev_screen
+    },
+
+    {
+        MODE_NORMAL,
+        {INPUT_EVENT_LONG_PRESS, INPUT_SOURCE_BUTTON_LEFT},
         MODE_NORMAL,
         action_prev_screen
     },
