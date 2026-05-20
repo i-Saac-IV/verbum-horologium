@@ -24,9 +24,9 @@ typedef enum Task_id {
 #define SERIAL_PRINT_FREQUENCY_HZ 1
 #define READ_DAYLIGHT_SENSORS_FREQUENCY_HZ 0.2
 #define READ_RTC_FREQUENCY_HZ 1
-#define READ_BUTTONS_FREQUENCY_HZ 20
+#define READ_BUTTONS_FREQUENCY_HZ 100
 #define UPDATE_RENDERER_FREQUENCY_HZ 60
-#define UPDATE_FSM_FREQUENCY_HZ 20
+#define UPDATE_FSM_FREQUENCY_HZ 50
 
 void task_scheduler_enableTask(Task_id_t taskId);
 void task_scheduler_disableTask(Task_id_t taskId);
