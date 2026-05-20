@@ -67,7 +67,7 @@ void fsm_init(void) {
 void fsm_update(void) {
     inputEvent_t ev;
 
-    while(event_manager_popFSM(&ev)) {
+    while (event_manager_popFSM(&ev)) {
         app_handle_event(&g_app, ev);
     }
 }
@@ -75,51 +75,46 @@ void fsm_update(void) {
 void action_next_screen(AppState_t* app) {
     app->screen = (Screen_t)(app->screen + 1);
 
-    if(app->screen >= SCREEN_COUNT)
+    if (app->screen >= SCREEN_COUNT) {
         app->screen = (Screen_t)0;
+    }
 }
 
-void action_prev_screen(AppState_t* app)
-{
-    if(app->screen == 0)
+void action_prev_screen(AppState_t* app) {
+    if (app->screen == 0) {
         app->screen = (Screen_t)(SCREEN_COUNT - 1);
-    else
+    } else {
         app->screen = (Screen_t)(app->screen - 1);
+    }
 }
 
-void app_handle_event(AppState_t* app, inputEvent_t ev)
-{
-    for(size_t i = 0; i < ARRAY_SIZE(app_table); i++)
-    {
+void app_handle_event(AppState_t* app, inputEvent_t ev) {
+    for (size_t i = 0; i < ARRAY_SIZE(app_table); i++) {
         const Transition_t* t = &app_table[i];
 
-        if(t->current_mode == app->mode &&
-           t->event.type == ev.type &&
-           t->event.source == ev.source)
-        {
+        if (t->current_mode == app->mode && t->event.type == ev.type && t->event.source == ev.source) {
             app->mode = t->next_mode;
 
-            if(t->action)
+            if (t->action) {
                 t->action(app);
-
+            }
             return;
         }
     }
 }
 
-void action_enter_settings(AppState_t* app)
-{
+void action_enter_settings(AppState_t* app) {
     app->settings_screen = SETTINGS_BRIGHTNESS;
 }
 
-void action_exit_settings(AppState_t* app)
-{
+void action_exit_settings(AppState_t* app) {
+
 }
 
-void action_settings_increment(AppState_t* app)
-{
+void action_settings_increment(AppState_t* app) {
+
 }
 
-void action_settings_decrement(AppState_t* app)
-{
+void action_settings_decrement(AppState_t* app) {
+
 }
