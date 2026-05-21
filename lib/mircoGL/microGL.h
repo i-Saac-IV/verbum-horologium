@@ -11,6 +11,9 @@ Date:   28-04-2026
 
 #include "display.h"
 
+#define DISPLAY_WIDTH       MAXTRIX_WIDTH
+#define DISPLAY_HEIGHT      MAXTRIX_HEIGHT
+
 void microGL_drawPixel(uint8_t x, uint8_t y, CRGB color);
 void microGL_drawLine(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2, CRGB color);
 void microGL_drawCircle(uint8_t par_x, uint8_t par_y, uint8_t par_r, CRGB color);
