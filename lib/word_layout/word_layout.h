@@ -47,6 +47,8 @@ enum words {
     WORD_HOROLOGIUM,
     WORD_O_CLOCK,
     WORD_NICE,
+    WORD_DAY,
+    WORD_NIGHT,
     NUM_WORDS
 };
 
