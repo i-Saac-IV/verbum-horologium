@@ -12,10 +12,11 @@ Date:   28-04-2026
 
 CRGB led_matrix[NUM_MATRIX_LEDS];
 
-uint8_t brightness = config.max_brightness / 2;
+uint8_t brightness;
 
 void display_init(void) {
     FastLED.addLeds<LED_TYPE, LED_MAXTRIX_PIN, COLOR_ORDER>(led_matrix, NUM_MATRIX_LEDS).setCorrection(TypicalLEDStrip);
+    brightness = daylight_sensor_getScaledBrightness(FRONT_SENSOR);
     display_updateBrightness();
     display_fill(CRGB::Black);
     display_show();
