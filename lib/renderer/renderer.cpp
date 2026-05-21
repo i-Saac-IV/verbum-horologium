@@ -19,11 +19,13 @@ typedef void (*screen_render_fn_t)(void);
 #include "word_clock.h"
 #include "staircase_clock.h"
 #include "digital_clock.h"
+#include "progress_clock.h"
 
 static const screen_render_fn_t screen_table[] = {
     word_clock_displayTime,
     staircase_clock_displayTime,
     digital_clock_displayTime,
+    progress_clock_displayTime
 };
 
 #include "settings_screen.h"

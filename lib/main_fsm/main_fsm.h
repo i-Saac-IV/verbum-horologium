@@ -35,6 +35,7 @@ typedef enum {
     SCREEN_WORD = 0,
     SCREEN_STAIRCASE,
     SCREEN_DIGITAL,
+    SCREEN_PROGRESS,
     SCREEN_COUNT
 } Screen_t;
 
