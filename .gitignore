@@ -4,3 +4,4 @@
 /test
 compile_commands.json
 verbum-horologium.code-workspace
+.clangd

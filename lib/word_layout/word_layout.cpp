@@ -38,7 +38,10 @@ const wordData_t wordPosition[NUM_WORDS] = {
     {0, 2, 6, VERTICAL},        // WORD_VERBUM
     {2, 7, 10, HORIZONTAL},     // WORD_HOROLOGIUM
     {0, 9, 7, HORIZONTAL},      // WORD_O_CLOCK
-    {1, 11, 4, HORIZONTAL}      // WORD_NICE
+    {1, 11, 4, HORIZONTAL},     // WORD_NICE
+    {6, 3, 3, HORIZONTAL},      // WORD_DAY
+    {4, 2, 5, HORIZONTAL}       // WORD_NIGHT
+
 };
 
 void word_layout_drawWord(words word, CRGB color) {

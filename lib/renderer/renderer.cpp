@@ -10,16 +10,59 @@ Date:   19-05-2026
 #include "display.h"
 #include "main_fsm.h"
 
-#include "word_clock.h"
-#include "staircase_clock.h"
-#include "digital_clock.h"
-
 void renderer_init(void) {
     display_init();
 }
 
-void renderer_update(void) {
+typedef void (*screen_render_fn_t)(void);
+
+#include "word_clock.h"
+#include "staircase_clock.h"
+#include "digital_clock.h"
+#include "progress_clock.h"
+
+static const screen_render_fn_t screen_table[] = {
+    word_clock_displayTime,
+    staircase_clock_displayTime,
+    digital_clock_displayTime,
+    progress_clock_displayTime
+};
+
+#include "settings_screen.h"
+
+static const screen_render_fn_t settings_table[] = {
+    settings_screen_timeFormat,
+    settings_screen_minBrightness,
+    settings_screen_maxBrightness,
+    settings_screen_nightEnd,
+    settings_screen_nightStart,
+    settings_screen_autoSleep,
+    settings_screen_enableDemo
+};
+
+void renderer_update(void)
+{
     display_fill(CRGB::Black);
+
+    AppState_t* app = app_get();
+
+    switch (app->mode) {
+        case MODE_NORMAL:
+            if (app->clock_screen < CLOCK_SCREEN_COUNT) {
+                screen_table[app->clock_screen]();
+            }
+        break;
+
+        case MODE_SETTINGS:
+            if (app->settings_screen < SETTINGS_SCREEN_COUNT) {
+                settings_table[app->settings_screen]();
+            }
+        break;
+
+        default:
+            break;
+    }
+
     inputEvent_t event;
 
     while (event_manager_popUI(&event)) {
@@ -28,22 +71,5 @@ void renderer_update(void) {
         }
     }
 
-    switch(g_app.screen) {
-        case SCREEN_WORD:
-            word_clock_displayTime();
-            break;
-
-        case SCREEN_STAIRCASE:
-            staircase_clock_displayTime();
-            break;
-
-        case SCREEN_DIGITAL:
-            digital_clock_displayTime();
-            break;
-
-        default:
-            break;
-    }
     display_show();
 }
-

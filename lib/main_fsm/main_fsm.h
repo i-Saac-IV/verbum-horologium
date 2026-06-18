@@ -1,50 +1,101 @@
 /*
-
 File:   main_fsm.h
 Author: Isaac Pawley
-Date:   30-04-2026
-
+Date:   20-05-2026
 */
 
-#ifndef INC_MAIN_FSM_H_
-#define INC_MAIN_FSM_H_
+#pragma once
 
+#include <stdint.h>
 #include "event_manager.h"
 
+// =====================================================
+// APP MODES (top-level FSM)
+// =====================================================
+
 typedef enum {
-    MODE_NORMAL,
+    MODE_NORMAL = 0,
     MODE_SETTINGS,
 } AppMode_t;
 
 typedef enum {
-    SCREEN_WORD,
-    SCREEN_STAIRCASE,
-    SCREEN_DIGITAL,
-    SCREEN_COUNT
-} Screen_t;
+    SETTINGS_IDLE = 0,
+    SETTINGS_EDIT,
+} SettingsMode_t;
 
 typedef enum {
-    SETTINGS_BRIGHTNESS,
-    SETTINGS_TIME_HOUR,
-    SETTINGS_TIME_MINUTE,
+    CLOCK_SCREEN_WORD = 0,
+    CLOCK_SCREEN_STAIRCASE,
+    CLOCK_SCREEN_DIGITAL,
+    CLOCK_SCREEN_PROGRESS,
+    CLOCK_SCREEN_COUNT
+} ClockScreen_t;
+
+typedef enum {
+    SETTINGS_SCREEN_TIME_FORMAT = 0,
+    SETTINGS_SCREEN_MIN_BRIGHTNESS,
+    SETTINGS_SCREEN_MAX_BRIGHTNESS,
+    SETTINGS_SCREEN_NIGHT_END,
+    SETTINGS_SCREEN_NIGHT_START,
+    SETTINGS_SCREEN_AUTO_SLEEP,
+    SETTINGS_SCREEN_ENABLE_DEMO, 
+    SETTINGS_SCREEN_COUNT
 } SettingsScreen_t;
+
+typedef enum {
+    PALETTE_CLASSIC = 0,
+    PALETTE_COUNT
+} Palette_t;
 
 typedef struct {
     AppMode_t mode;
-    Screen_t screen;
+    SettingsMode_t settings_mode;
+
+    ClockScreen_t clock_screen;
     SettingsScreen_t settings_screen;
+
+    Palette_t palette;
 } AppState_t;
 
-extern AppState_t g_app;
+AppState_t* app_get(void);
+
+typedef struct {
+    uint8_t* value;
+    uint8_t min;
+    uint8_t max;
+    uint8_t step;
+} Setting_t;
+
+extern Setting_t settings[];
+extern const uint8_t SETTINGS_COUNT;
+Setting_t* fsm_get_current_setting(void);
+
+// =====================================================
+// GLOBAL INSTANCE (declared extern)
+// =====================================================
+
+extern AppState_t app;
+
+// =====================================================
+// PUBLIC API
+// =====================================================
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 void fsm_init(void);
 void fsm_update(void);
+void app_handle_event(AppState_t* app, inputEvent_t ev);
+
+// screen actions (optional external use)
 void action_next_screen(AppState_t* app);
 void action_prev_screen(AppState_t* app);
-void app_handle_event(AppState_t* app, inputEvent_t ev);
+
+// settings entry point actions
 void action_enter_settings(AppState_t* app);
 void action_exit_settings(AppState_t* app);
-void action_settings_increment(AppState_t* app);
-void action_settings_decrement(AppState_t* app);
 
-#endif /* INC_MAIN_FSM_H_ */
+#ifdef __cplusplus
+}
+#endif

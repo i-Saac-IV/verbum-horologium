@@ -20,6 +20,7 @@ void serial_taskPrint() {
     serial_printf("Front: %d\tDisplay: %d\tPCB: %d\n", daylight_sensor_getScaledBrightness(FRONT_SENSOR), daylight_sensor_getScaledBrightness(DISPLAY_SENSOR), daylight_sensor_getScaledBrightness(PCB_SENSOR));
     DateTime now = rtc_getTime();
     serial_printf("Time: %02u:%02u\n", now.hour(), now.minute());
+    serial_printf("\n");
 }
 
 void serial_init(void) {

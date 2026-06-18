@@ -46,7 +46,7 @@ void microGL_drawCircle(uint8_t par_x, uint8_t par_y, uint8_t par_r, CRGB color)
     int32_t err = 2 - 2 * par_r;
     int32_t e2;
 
-    if (par_x >= MAXTRIX_WIDTH || par_y >= MAXTRIX_HEIGHT) {
+    if (par_x >= DISPLAY_WIDTH || par_y >= DISPLAY_HEIGHT) {
         return;
     }
 
@@ -78,7 +78,7 @@ void microGL_drawFilledCircle(uint8_t par_x, uint8_t par_y, uint8_t par_r, CRGB 
     int32_t err = 2 - 2 * par_r;
     int32_t e2;
 
-    if (par_x >= MAXTRIX_WIDTH || par_y >= MAXTRIX_HEIGHT) {
+    if (par_x >= DISPLAY_WIDTH || par_y >= DISPLAY_HEIGHT) {
         return;
     }
 
@@ -118,8 +118,8 @@ void microGL_fillRectangle(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2, CRGB 
     uint8_t y_start = ((y1<=y2) ? y1 : y2);
     uint8_t y_end   = ((y1<=y2) ? y2 : y1);
 
-    for (uint8_t y= y_start; (y<= y_end)&&(y<MAXTRIX_HEIGHT); y++) {
-        for (uint8_t x= x_start; (x<= x_end)&&(x<MAXTRIX_WIDTH); x++) {
+    for (uint8_t y= y_start; (y<= y_end)&&(y<DISPLAY_HEIGHT); y++) {
+        for (uint8_t x= x_start; (x<= x_end)&&(x<DISPLAY_WIDTH); x++) {
             microGL_drawPixel(x, y, color);
         }
     }
@@ -129,7 +129,7 @@ void microGL_drawBitmap(uint8_t x, uint8_t y, const unsigned char* bitmap, uint8
     int16_t byteWidth = (w + 7) / 8;
     uint8_t byte = 0;
 
-    if (x >= MAXTRIX_WIDTH || y >= MAXTRIX_HEIGHT) {
+    if (x >= DISPLAY_WIDTH || y >= DISPLAY_HEIGHT) {
         return;
     }
 
