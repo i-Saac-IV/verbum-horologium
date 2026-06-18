@@ -40,7 +40,7 @@ void settings_screen_timeFormat(void) {
         word_layout_drawWord(WORD_TWELVE_HOUR, CRGB::White);
     }
 
-    setting_screen_indicator(0, g_app.settings_mode);
+    setting_screen_indicator(0, app.settings_mode);
 }
 
 void settings_screen_minBrightness(void) {
@@ -50,7 +50,7 @@ void settings_screen_minBrightness(void) {
 
     setting_screen_drawDigits(val);
 
-    setting_screen_indicator(1, g_app.settings_mode);
+    setting_screen_indicator(1, app.settings_mode);
 
 }
 
@@ -61,7 +61,7 @@ void settings_screen_maxBrightness(void) {
 
     setting_screen_drawDigits(val);
 
-    setting_screen_indicator(2, g_app.settings_mode);
+    setting_screen_indicator(2, app.settings_mode);
 }
 
 void settings_screen_nightEnd(void) {
@@ -73,7 +73,7 @@ void settings_screen_nightEnd(void) {
 
     setting_screen_drawDigits(val);
 
-    setting_screen_indicator(3, g_app.settings_mode);
+    setting_screen_indicator(3, app.settings_mode);
 }
 
 void settings_screen_nightStart(void) {
@@ -85,7 +85,7 @@ void settings_screen_nightStart(void) {
 
     setting_screen_drawDigits(val);
 
-    setting_screen_indicator(4, g_app.settings_mode);
+    setting_screen_indicator(4, app.settings_mode);
 }
 
 void settings_screen_autoSleep(void) {
@@ -95,7 +95,7 @@ void settings_screen_autoSleep(void) {
 
     setting_screen_drawDigits(val);
 
-    setting_screen_indicator(5, g_app.settings_mode);
+    setting_screen_indicator(5, app.settings_mode);
 }
 
 void settings_screen_enableDemo(void) {
@@ -105,5 +105,5 @@ void settings_screen_enableDemo(void) {
 
     setting_screen_drawDigits(val);
 
-    setting_screen_indicator(6, g_app.settings_mode);
+    setting_screen_indicator(6, app.settings_mode);
 }
