@@ -13,40 +13,37 @@
 // GLOBAL APP STATE
 // =====================================================
 
-AppState_t g_app = {
+AppState_t app = {
     .mode = MODE_NORMAL,
-    .screen = SCREEN_WORD,
     .settings_mode = SETTINGS_IDLE,
-    .settings_index = 0,
-    .settings_dirty = false,
+    .clock_screen = CLOCK_SCREEN_WORD,
+    .settings_screen = SETTINGS_SCREEN_TIME_FORMAT
 };
 
-AppState_t* app_get(void)
-{
-    return &g_app;
+AppState_t* app_get(void) {
+    return &app;
 }
 
 // =====================================================
-// SETTINGS MODEL (example)
+// SETTINGS
 // =====================================================
 
 #include "config.h"
 
 Setting_t settings[] = {
-
-    {"Time Format",      (uint8_t*)&config.time_format,      0, 1, 1},
-    {"Min Brightness",   (uint8_t*)&config.min_brightness,   0, 255, 5},
-    {"Max Brightness",   (uint8_t*)&config.max_brightness,   0, 255, 5},
-    {"Night End",        (uint8_t*)&config.nightMode_end,    0, 23, 1},
-    {"Night Start",      (uint8_t*)&config.nightMode_start,  0, 23, 1},
-    {"Auto Sleep",       (uint8_t*)&config.auto_sleep,       0, 1, 1},
-    {"Enable Demo",      (uint8_t*)&config.enable_demo,      0, 1, 1},
+    {(uint8_t*)&config.time_format,      0, 1, 1},
+    {(uint8_t*)&config.min_brightness,   0, 255, 5},
+    {(uint8_t*)&config.max_brightness,   0, 255, 5},
+    {(uint8_t*)&config.nightMode_end,    0, 23, 1},
+    {(uint8_t*)&config.nightMode_start,  0, 23, 1},
+    {(uint8_t*)&config.auto_sleep,       0, 1, 1},
+    {(uint8_t*)&config.enable_demo,      0, 1, 1},
 };
 
 const uint8_t SETTINGS_COUNT = sizeof(settings) / sizeof(settings[0]);
 
 Setting_t* fsm_get_current_setting(void) {
-    return &settings[g_app.settings_index];
+    return &settings[app.settings_screen];
 }
 
 // =====================================================
@@ -66,6 +63,7 @@ typedef struct {
 
 void action_next_screen(AppState_t* app);
 void action_prev_screen(AppState_t* app);
+void action_change_color_pallette(AppState_t* app);
 void action_enter_settings(AppState_t* app);
 
 // =====================================================
@@ -85,36 +83,47 @@ void action_exit_settings(AppState_t* app);
 // MAIN FSM TABLE
 // =====================================================
 
-// =====================================================
-// PUBLIC ENTRY POINT
-// =====================================================
-
 void fsm_update(void)
 {
     inputEvent_t ev;
 
     while (event_manager_popFSM(&ev))
     {
-        app_handle_event(&g_app, ev);
+        app_handle_event(&app, ev);
     }
 }
 
 static const Transition_t app_table[] = {
 
     { MODE_NORMAL,
-      {INPUT_EVENT_SHORT_PRESS, INPUT_SOURCE_BUTTON_RIGHT},
-      MODE_NORMAL,
-      action_next_screen },
+        {INPUT_EVENT_SHORT_PRESS, INPUT_SOURCE_BUTTON_RIGHT},
+        MODE_NORMAL,
+        action_next_screen },
 
     { MODE_NORMAL,
-      {INPUT_EVENT_SHORT_PRESS, INPUT_SOURCE_BUTTON_LEFT},
-      MODE_NORMAL,
-      action_prev_screen },
+        {INPUT_EVENT_LONG_PRESS, INPUT_SOURCE_BUTTON_RIGHT},
+        MODE_NORMAL,
+        action_next_screen },
 
     { MODE_NORMAL,
-      {INPUT_EVENT_LONG_PRESS, INPUT_SOURCE_BUTTON_TOP},
-      MODE_SETTINGS,
-      action_enter_settings },
+        {INPUT_EVENT_SHORT_PRESS, INPUT_SOURCE_BUTTON_LEFT},
+        MODE_NORMAL,
+        action_prev_screen },
+
+    { MODE_NORMAL,
+        {INPUT_EVENT_LONG_PRESS, INPUT_SOURCE_BUTTON_LEFT},
+        MODE_NORMAL,
+        action_prev_screen },
+
+    { MODE_NORMAL,
+        {INPUT_EVENT_SHORT_PRESS, INPUT_SOURCE_BUTTON_TOP},
+        MODE_NORMAL,
+        action_change_color_pallette },
+
+    { MODE_NORMAL,
+        {INPUT_EVENT_LONG_PRESS, INPUT_SOURCE_BUTTON_TOP},
+        MODE_SETTINGS,
+        action_enter_settings }
 };
 
 // =====================================================
@@ -143,7 +152,7 @@ static const Transition_t settings_table[] = {
       SETTINGS_EDIT_MODE,
       action_settings_begin_edit },
 
-    // EXIT SETTINGS (NEW)
+    // exit settings
     { SETTINGS_IDLE_MODE,
       {INPUT_EVENT_LONG_PRESS, INPUT_SOURCE_BUTTON_TOP},
       SETTINGS_IDLE_MODE,
@@ -164,19 +173,21 @@ static const Transition_t settings_table[] = {
     { SETTINGS_EDIT_MODE,
       {INPUT_EVENT_SHORT_PRESS, INPUT_SOURCE_BUTTON_TOP},
       SETTINGS_IDLE_MODE,
-      action_settings_save },
+      nullptr },
 
     { SETTINGS_EDIT_MODE,
       {INPUT_EVENT_LONG_PRESS, INPUT_SOURCE_BUTTON_TOP},
       SETTINGS_IDLE_MODE,
-      action_settings_cancel },
+      nullptr },
 };
 
 // =====================================================
 // INIT
 // =====================================================
 
-void fsm_init(void) {}
+void fsm_init(void) {
+    // Nothing to init...
+}
 
 // =====================================================
 // EVENT DISPATCHER
@@ -224,58 +235,52 @@ void app_handle_event(AppState_t* app, inputEvent_t ev)
     }
 }
 
-// =====================================================
-// ACTIONS
-// =====================================================
-
-void action_next_screen(AppState_t* app)
-{
-    app->screen = (Screen_t)(app->screen + 1);
-    if (app->screen >= SCREEN_COUNT)
-        app->screen = (Screen_t)0;
+uint8_t next_index(uint8_t i, uint8_t max) {
+    return (i + 1) % max;
 }
 
-void action_prev_screen(AppState_t* app)
-{
-    if (app->screen == 0)
-        app->screen = (Screen_t)(SCREEN_COUNT - 1);
-    else
-        app->screen = (Screen_t)(app->screen - 1);
+uint8_t prev_index(uint8_t i, uint8_t max) {
+    return (i + max - 1) % max;
 }
 
-void action_enter_settings(AppState_t* app)
-{
-    app->mode = MODE_SETTINGS;
+// =====================================================
+// CLOCK ACTIONS
+// =====================================================
+
+void action_next_screen(AppState_t *app) {
+    app->clock_screen = (ClockScreen_t)next_index(app->clock_screen, CLOCK_SCREEN_COUNT);
+}
+
+void action_prev_screen(AppState_t *app) {
+    app->clock_screen = (ClockScreen_t)prev_index(app->clock_screen, CLOCK_SCREEN_COUNT);
+}
+
+void action_change_color_pallette(AppState_t* app) {
+    app->palette = (Palette_t)next_index(app->palette, PALETTE_COUNT);
+}
+
+void action_enter_settings(AppState_t* app) {
     app->settings_mode = SETTINGS_IDLE;
-    app->settings_index = 0;
-    app->settings_dirty = false;
 }
 
 // =====================================================
 // SETTINGS ACTIONS
 // =====================================================
 
-void action_settings_next(AppState_t* app)
-{
-    app->settings_index = (app->settings_index + 1) % SETTINGS_COUNT;
+void action_settings_next(AppState_t* app) {
+    app->settings_screen = (SettingsScreen_t)next_index(app->settings_screen, SETTINGS_SCREEN_COUNT);
 }
 
-void action_settings_prev(AppState_t* app)
-{
-    if (app->settings_index == 0)
-        app->settings_index = SETTINGS_COUNT - 1;
-    else
-        app->settings_index--;
+void action_settings_prev(AppState_t* app) {
+    app->settings_screen = (SettingsScreen_t)prev_index(app->settings_screen, SETTINGS_SCREEN_COUNT);
 }
 
-void action_settings_begin_edit(AppState_t* app)
-{
-    app->settings_dirty = false;
+void action_settings_begin_edit(AppState_t* app) {
+    // Not much here...
 }
 
-void action_settings_increment(AppState_t* app)
-{
-    Setting_t* s = &settings[app->settings_index];
+void action_settings_increment(AppState_t* app) {
+    Setting_t* s = &settings[(uint8_t)(app->settings_screen)];
 
     if (*s->value < s->max) {
         *s->value += s->step;
@@ -285,13 +290,10 @@ void action_settings_increment(AppState_t* app)
     } else {
         *s->value = s->min;
     }
-
-    app->settings_dirty = true;
 }
 
-void action_settings_decrement(AppState_t* app)
-{
-    Setting_t* s = &settings[app->settings_index];
+void action_settings_decrement(AppState_t* app) {
+    Setting_t* s = &settings[(uint8_t)(app->settings_screen)];
 
     if (*s->value > s->min) {
         *s->value -= s->step;
@@ -301,23 +303,8 @@ void action_settings_decrement(AppState_t* app)
     } else {
         *s->value = s->max;
     }
-
-    app->settings_dirty = true;
 }
 
-void action_settings_save(AppState_t* app)
-{
-    app->settings_mode = SETTINGS_IDLE;
-}
-
-void action_settings_cancel(AppState_t* app)
-{
-    app->settings_mode = SETTINGS_IDLE;
-}
-
-// NEW: EXIT SETTINGS
-void action_exit_settings(AppState_t* app)
-{
-    app->settings_mode = SETTINGS_IDLE;
+void action_exit_settings(AppState_t* app) {
     app->mode = MODE_NORMAL;
 }

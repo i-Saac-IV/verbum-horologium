@@ -18,45 +18,48 @@ typedef enum {
     MODE_SETTINGS,
 } AppMode_t;
 
-// =====================================================
-// SETTINGS SUB-MODES
-// =====================================================
-
 typedef enum {
     SETTINGS_IDLE = 0,
     SETTINGS_EDIT,
 } SettingsMode_t;
 
-// =====================================================
-// SCREEN MODES (your existing UI screens)
-// =====================================================
+typedef enum {
+    CLOCK_SCREEN_WORD = 0,
+    CLOCK_SCREEN_STAIRCASE,
+    CLOCK_SCREEN_DIGITAL,
+    CLOCK_SCREEN_PROGRESS,
+    CLOCK_SCREEN_COUNT
+} ClockScreen_t;
 
 typedef enum {
-    SCREEN_WORD = 0,
-    SCREEN_STAIRCASE,
-    SCREEN_DIGITAL,
-    SCREEN_PROGRESS,
-    SCREEN_COUNT
-} Screen_t;
+    SETTINGS_SCREEN_TIME_FORMAT = 0,
+    SETTINGS_SCREEN_MIN_BRIGHTNESS,
+    SETTINGS_SCREEN_MAX_BRIGHTNESS,
+    SETTINGS_SCREEN_NIGHT_END,
+    SETTINGS_SCREEN_NIGHT_START,
+    SETTINGS_SCREEN_AUTO_SLEEP,
+    SETTINGS_SCREEN_ENABLE_DEMO, 
+    SETTINGS_SCREEN_COUNT
+} SettingsScreen_t;
 
-// =====================================================
-// GLOBAL APP STATE
-// =====================================================
+typedef enum {
+    PALETTE_CLASSIC = 0,
+    PALETTE_COUNT
+} Palette_t;
 
 typedef struct {
     AppMode_t mode;
-    Screen_t screen;
-
-    // settings FSM state
     SettingsMode_t settings_mode;
-    uint8_t settings_index;
-    bool settings_dirty;
+
+    ClockScreen_t clock_screen;
+    SettingsScreen_t settings_screen;
+
+    Palette_t palette;
 } AppState_t;
 
 AppState_t* app_get(void);
 
 typedef struct {
-    const char* name;
     uint8_t* value;
     uint8_t min;
     uint8_t max;
@@ -71,7 +74,7 @@ Setting_t* fsm_get_current_setting(void);
 // GLOBAL INSTANCE (declared extern)
 // =====================================================
 
-extern AppState_t g_app;
+extern AppState_t app;
 
 // =====================================================
 // PUBLIC API
