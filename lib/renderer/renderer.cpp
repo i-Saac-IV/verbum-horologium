@@ -48,14 +48,14 @@ void renderer_update(void)
 
     switch (app->mode) {
         case MODE_NORMAL:
-            if (app->screen < SCREEN_COUNT) {
-                screen_table[app->screen]();
+            if (app->clock_screen < CLOCK_SCREEN_COUNT) {
+                screen_table[app->clock_screen]();
             }
         break;
 
         case MODE_SETTINGS:
-            if (app->settings_index < SETTINGS_COUNT) {
-                settings_table[app->settings_index]();
+            if (app->settings_screen < SETTINGS_SCREEN_COUNT) {
+                settings_table[app->settings_screen]();
             }
         break;
 
