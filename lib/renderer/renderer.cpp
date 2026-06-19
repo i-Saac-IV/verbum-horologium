@@ -11,6 +11,7 @@ Date:   19-05-2026
 #include "main_fsm.h"
 #include "render_target.h"
 #include "microGL.h"
+#include "config.h"
 
 void clearLayers(void) {
     fill_solid(layer_bg.buffer, layer_bg.w * layer_bg.h, CRGB::Black);
@@ -48,6 +49,9 @@ void renderer_init(void) {
 
 typedef void (*screen_render_fn_t)(void);
 
+#include "transitions.h"
+using transition_fn_t = void (*)(const TransitionContext&);
+
 #include "word_clock.h"
 #include "staircase_clock.h"
 #include "digital_clock.h"
@@ -69,7 +73,15 @@ static const screen_render_fn_t settings_table[] = {
     settings_screen_nightEnd,
     settings_screen_nightStart,
     settings_screen_autoSleep,
-    settings_screen_enableDemo
+    settings_screen_enableDemo,
+    settings_screen_transitionEffect
+};
+
+#include "transitions.h"
+
+static const transition_fn_t transitions_table[] = {
+    transition_dissolve,
+    transition_fade
 };
 
 struct TransitionState {
@@ -78,20 +90,29 @@ struct TransitionState {
     screen_render_fn_t from_screen;
     screen_render_fn_t to_screen;
 
+    transition_fn_t effect;
+
     uint32_t start_ms;
     uint32_t duration_ms;
+
+    uint8_t noise[NUM_MATRIX_LEDS];
 };
 
 static TransitionState transition;
 
 static screen_render_fn_t last_screen_fn = nullptr;
 
-void renderer_startTransition(screen_render_fn_t from, screen_render_fn_t to) {
+void renderer_startTransition(screen_render_fn_t from, screen_render_fn_t to, transition_fn_t effect) {
     transition.active = true;
     transition.from_screen = from;
     transition.to_screen = to;
+    transition.effect = effect;
     transition.start_ms = millis();
-    transition.duration_ms = 200;
+    transition.duration_ms = 500;
+
+    for (int i = 0; i < NUM_MATRIX_LEDS; i++) {
+        transition.noise[i] = rand() & 0xFF;
+    }
 }
 
 void renderer_updateTransition() {
@@ -116,7 +137,8 @@ void renderer_detectScreenChanges(AppState_t* app)
     }
 
     if (current_screen_fn != last_screen_fn) {
-        renderer_startTransition(last_screen_fn, current_screen_fn);
+        transition_fn_t transition_effect_fn = transitions_table[config.transition_effect];
+        renderer_startTransition(last_screen_fn, current_screen_fn, transition_effect_fn);
         last_screen_fn = current_screen_fn;
     }
 }
@@ -124,22 +146,31 @@ void renderer_detectScreenChanges(AppState_t* app)
 void renderer_drawTransition(void) {
     uint32_t elapsed = millis() - transition.start_ms;
 
+    if (elapsed >= transition.duration_ms) {
+        elapsed = transition.duration_ms;
+    }        
+
     uint8_t t = (elapsed * 255) / transition.duration_ms;
-    if (t > 255) {
-        t = 255;
-    }
+
+    clearLayers();
 
     microGL_setTarget(layer_bg);
-    clearLayer(layer_bg);
-    transition.from_screen();
+    if (transition.from_screen) {
+        transition.from_screen();
+    }
 
     microGL_setTarget(layer_fg);
-    clearLayer(layer_fg);
-    transition.to_screen();
-
-    for (int i = 0; i < NUM_MATRIX_LEDS; i++) {
-        layer_mask.buffer[i] = t;
+    if (transition.to_screen) {
+        transition.to_screen();
     }
+
+    TransitionContext ctx;
+    ctx.t = t;
+    ctx.noise = transition.noise;
+
+    if (transition.effect) {
+        transition.effect(ctx);
+    }    
 }
 
 void renderer_update(void) {
