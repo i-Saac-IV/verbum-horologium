@@ -9,19 +9,16 @@
 #include "progress_clock.h"
 
 #include "microGL.h"
-#include "rtc.h"
 #include "config.h"
 
 void progress_clock_display12HourTime(DateTime now);
 void progress_clock_display24HourTime(DateTime now);
 
-void progress_clock_displayTime(void) {
-    DateTime now = rtc_getTime();
-
+void progress_clock_render(DateTime time) {
     if (config.time_format == TIME_FORMAT_12H) {
-        progress_clock_display12HourTime(now);
+        progress_clock_display12HourTime(time);
     } else {
-        progress_clock_display24HourTime(now);
+        progress_clock_display24HourTime(time);
     }
 }
 

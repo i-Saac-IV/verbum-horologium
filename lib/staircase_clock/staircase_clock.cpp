@@ -10,7 +10,14 @@ Date:   30-04-2026
 
 #include "microGL.h"
 #include "config.h"
-#include "rtc.h"
+
+void staircase_clock_drawHours(uint8_t hour);
+void staircase_clock_drawMinutes(uint8_t minute);
+
+void staircase_clock_render(DateTime time) {
+    staircase_clock_drawHours(time.hour());
+    staircase_clock_drawMinutes(time.minute());
+}
 
 void staircase_clock_drawHours(uint8_t hour) {
     if (config.time_format == TIME_FORMAT_12H) {
@@ -23,10 +30,4 @@ void staircase_clock_drawHours(uint8_t hour) {
 void staircase_clock_drawMinutes(uint8_t minute) {
     microGL_draw3x5Digit(6, 5, minute / 10, CHSV(128, 255, 255));
     microGL_draw3x5Digit(9, 7, minute % 10, CHSV(192, 255, 255));
-}
-
-void staircase_clock_displayTime(void) {
-    DateTime now = rtc_getTime();
-    staircase_clock_drawHours(now.hour());
-    staircase_clock_drawMinutes(now.minute());
 }
