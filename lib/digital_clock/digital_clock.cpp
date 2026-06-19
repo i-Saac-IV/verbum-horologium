@@ -14,9 +14,9 @@ Date:   28-04-2026
 void digital_clock_drawHours(uint8_t hour);
 void digital_clock_drawMinutes(uint8_t minute);
 
-void digital_clock_render(DateTime time) {
-    digital_clock_drawHours(time.hour());
-    digital_clock_drawMinutes(time.minute());
+void digital_clock_render(const DateTime& now) {
+    digital_clock_drawHours(now.hour());
+    digital_clock_drawMinutes(now.minute());
 }
 
 void digital_clock_drawHours(uint8_t hour) {

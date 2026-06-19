@@ -11,6 +11,6 @@ Date:   30-04-2026
 
 #include "RTClib.h"
 
-void staircase_clock_render(DateTime time);
+void staircase_clock_render(const DateTime& now);
 
 #endif /* INC_STAIRCASE_CLOCK_H_ */

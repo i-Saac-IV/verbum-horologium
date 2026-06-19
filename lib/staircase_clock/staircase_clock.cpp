@@ -14,9 +14,9 @@ Date:   30-04-2026
 void staircase_clock_drawHours(uint8_t hour);
 void staircase_clock_drawMinutes(uint8_t minute);
 
-void staircase_clock_render(DateTime time) {
-    staircase_clock_drawHours(time.hour());
-    staircase_clock_drawMinutes(time.minute());
+void staircase_clock_render(const DateTime& now) {
+    staircase_clock_drawHours(now.hour());
+    staircase_clock_drawMinutes(now.minute());
 }
 
 void staircase_clock_drawHours(uint8_t hour) {

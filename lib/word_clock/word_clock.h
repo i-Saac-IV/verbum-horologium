@@ -12,6 +12,6 @@ Date:   17-05-2026
 #include <Arduino.h>
 #include "RTClib.h"
 
-void word_clock_render(DateTime time);
+void word_clock_render(const DateTime& now);
 
 #endif /* INC_WORD_CLOCK_H_ */

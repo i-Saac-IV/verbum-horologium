@@ -14,11 +14,11 @@
 void progress_clock_display12HourTime(DateTime now);
 void progress_clock_display24HourTime(DateTime now);
 
-void progress_clock_render(DateTime time) {
+void progress_clock_render(const DateTime& now) {
     if (config.time_format == TIME_FORMAT_12H) {
-        progress_clock_display12HourTime(time);
+        progress_clock_display12HourTime(now);
     } else {
-        progress_clock_display24HourTime(time);
+        progress_clock_display24HourTime(now);
     }
 }
 
