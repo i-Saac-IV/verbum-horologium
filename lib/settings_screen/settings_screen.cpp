@@ -15,9 +15,9 @@
 
 void setting_screen_indicator(uint8_t settings_index, uint8_t settings_mode) {
     if (settings_mode == SETTINGS_EDIT) {
-        microGL_drawPixel(settings_index % 12, settings_index / 12, CRGB::Red);
+        microGL_drawPixel(settings_index % 12, settings_index / 12, CRGB(255, 0, 0));
     } else {
-        microGL_drawPixel(settings_index % 12, settings_index / 12, CRGB::Green);
+        microGL_drawPixel(settings_index % 12, settings_index / 12, CRGB(0, 255, 0));
     }
 }
 
