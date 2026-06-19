@@ -18,6 +18,14 @@ void clearLayers(void) {
     memset(layer_mask.buffer, 0, layer_mask.w * layer_mask.h);
 }
 
+void clearLayer(RenderTarget<CRGB>& layer) {
+    fill_solid(layer.buffer,layer.w * layer.h,CRGB::Black);
+}
+
+void clearLayer(RenderTarget<uint8_t>& layer) {
+    memset(layer.buffer, 0, layer.w * layer.h);
+}
+
 void composeFrame(void) {
     for (int i = 0; i < NUM_MATRIX_LEDS; i++) {
         CRGB bgc = layer_bg.buffer[i];
@@ -64,36 +72,101 @@ static const screen_render_fn_t settings_table[] = {
     settings_screen_enableDemo
 };
 
-void renderer_update(void) {
+struct TransitionState {
+    bool active;
 
-    clearLayers();
+    screen_render_fn_t from_screen;
+    screen_render_fn_t to_screen;
 
-    AppState_t* app = app_get();
+    uint32_t start_ms;
+    uint32_t duration_ms;
+};
+
+static TransitionState transition;
+
+static screen_render_fn_t last_screen_fn = nullptr;
+
+void renderer_startTransition(screen_render_fn_t from, screen_render_fn_t to) {
+    transition.active = true;
+    transition.from_screen = from;
+    transition.to_screen = to;
+    transition.start_ms = millis();
+    transition.duration_ms = 200;
+}
+
+void renderer_updateTransition() {
+    if (!transition.active) {
+        return;
+    }
+
+    uint32_t elapsed = millis() - transition.start_ms;
+
+    if (elapsed >= transition.duration_ms) {
+        transition.active = false;
+    }
+}
+
+void renderer_detectScreenChanges(AppState_t* app)
+{
+    screen_render_fn_t current_screen_fn = (app->mode == MODE_NORMAL) ? screen_table[app->clock_screen] : settings_table[app->settings_screen];
+
+    if (last_screen_fn == nullptr) {
+        last_screen_fn = current_screen_fn;
+        return;
+    }
+
+    if (current_screen_fn != last_screen_fn) {
+        renderer_startTransition(last_screen_fn, current_screen_fn);
+        last_screen_fn = current_screen_fn;
+    }
+}
+
+void renderer_drawTransition(void) {
+    uint32_t elapsed = millis() - transition.start_ms;
+
+    uint8_t t = (elapsed * 255) / transition.duration_ms;
+    if (t > 255) {
+        t = 255;
+    }
 
     microGL_setTarget(layer_bg);
+    clearLayer(layer_bg);
+    transition.from_screen();
 
-    switch (app->mode) {
-        case MODE_NORMAL:
-            if (app->clock_screen < CLOCK_SCREEN_COUNT) {
-                screen_table[app->clock_screen]();
-            }
-        break;
+    microGL_setTarget(layer_fg);
+    clearLayer(layer_fg);
+    transition.to_screen();
 
-        case MODE_SETTINGS:
-            if (app->settings_screen < SETTINGS_SCREEN_COUNT) {
-                settings_table[app->settings_screen]();
-            }
-        break;
+    for (int i = 0; i < NUM_MATRIX_LEDS; i++) {
+        layer_mask.buffer[i] = t;
+    }
+}
 
-        default:
-            break;
+void renderer_update(void) {
+    AppState_t* app = app_get();
+
+    renderer_detectScreenChanges(app);
+    renderer_updateTransition();
+
+    if (transition.active) {
+        renderer_drawTransition();
+    } else {
+        clearLayers();
+
+        microGL_setTarget(layer_bg);
+
+        screen_render_fn_t current = (app->mode == MODE_NORMAL) ? screen_table[app->clock_screen] : settings_table[app->settings_screen];
+
+        if (current) {
+            current();
+        }
     }
 
     inputEvent_t event;
 
     while (event_manager_popUI(&event)) {
         if (event.type == INPUT_EVENT_DOWN) {
-            display_setPixel(1, 7, CRGB::White); // put real button reaction here...
+            microGL_drawPixel(1, 7, CRGB(255, 255, 255)); // put real button reaction here...
         }
     }
     
