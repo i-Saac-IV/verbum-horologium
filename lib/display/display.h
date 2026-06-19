@@ -21,6 +21,8 @@ Date:   28-04-2026
 #define MAX_MAXTRIX_BRIGHTNESS  255
 #define MIN_MAXTRIX_BRIGHTNESS  20
 
+extern CRGB led_matrix[NUM_MATRIX_LEDS];
+
 void display_init(void);
 void display_show(void);
 void display_fill(CRGB color);
