@@ -26,6 +26,7 @@ typedef struct {
     uint8_t nightMode_start;
     uint8_t auto_sleep;
     uint8_t enable_demo;
+    uint8_t transition_effect;
 } config_t;
 
 extern config_t config;

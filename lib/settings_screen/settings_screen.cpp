@@ -107,3 +107,13 @@ void settings_screen_enableDemo(void) {
 
     setting_screen_indicator(6, app.settings_mode);
 }
+
+void settings_screen_transitionEffect(void) {
+    Setting_t* s = fsm_get_current_setting();
+
+    uint8_t val = (uint8_t)(*(s->value));
+
+    setting_screen_drawDigits(val);
+
+    setting_screen_indicator(7, app.settings_mode);
+}

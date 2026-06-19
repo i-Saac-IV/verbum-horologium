@@ -38,6 +38,7 @@ Setting_t settings[] = {
     {(uint8_t*)&config.nightMode_start,  0, 23, 1},
     {(uint8_t*)&config.auto_sleep,       0, 1, 1},
     {(uint8_t*)&config.enable_demo,      0, 1, 1},
+    {(uint8_t*)&config.transition_effect, 0, 1, 1}
 };
 
 const uint8_t SETTINGS_COUNT = sizeof(settings) / sizeof(settings[0]);
