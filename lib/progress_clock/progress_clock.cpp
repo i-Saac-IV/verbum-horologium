@@ -41,7 +41,7 @@ void progress_clock_display24HourTime(DateTime now) {
     if (now.hour() > 0) {
         if (now.hour() > 13) {
             microGL_fillRectangle(0, 0, DISPLAY_WIDTH / 2 - 1, DISPLAY_HEIGHT - 1, CRGB(0,0,255));
-            microGL_fillRectangle(DISPLAY_WIDTH / 2, 0, DISPLAY_WIDTH - 1, now.hour() % 12 - 1, CRGB::Green);
+            microGL_fillRectangle(DISPLAY_WIDTH / 2, 0, DISPLAY_WIDTH - 1, now.hour() % 12 - 1, CRGB(0,0,255));
 
             if (minute > 0) {
                 microGL_fillRectangle(DISPLAY_WIDTH / 2, now.hour() % 12, minute - 1 + DISPLAY_WIDTH / 2, now.hour() % 12, CRGB(255,0,0));
