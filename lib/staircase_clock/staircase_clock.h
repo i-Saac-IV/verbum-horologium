@@ -9,6 +9,8 @@ Date:   30-04-2026
 #ifndef INC_STAIRCASE_CLOCK_H_
 #define INC_STAIRCASE_CLOCK_H_
 
-void staircase_clock_displayTime(void);
+#include "RTClib.h"
+
+void staircase_clock_render(const DateTime& now);
 
 #endif /* INC_STAIRCASE_CLOCK_H_ */

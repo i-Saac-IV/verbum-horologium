@@ -9,10 +9,11 @@ Date:   17-05-2026
 #include "word_clock.h"
 
 #include "word_layout.h"
-#include "rtc.h"
 
-void word_clock_displayTime(void) {
-    DateTime now = rtc_getTime();
+void word_clock_drawClock(uint8_t hour, uint8_t minute);
+void word_clock_drawHours(uint8_t hour);
+
+void word_clock_render(const DateTime& now) {
     word_clock_drawClock(now.hour(), now.minute());
 }
 

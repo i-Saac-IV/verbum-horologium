@@ -44,6 +44,6 @@ void rtc_setDate(uint16_t year, uint8_t month, uint8_t day) {
     ));
 }
 
-DateTime rtc_getTime(void) {
-    return now;
+DateTime* rtc_getTime(void) {
+    return &now;
 }

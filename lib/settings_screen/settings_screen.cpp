@@ -15,9 +15,9 @@
 
 void setting_screen_indicator(uint8_t settings_index, uint8_t settings_mode) {
     if (settings_mode == SETTINGS_EDIT) {
-        microGL_drawPixel(settings_index % 12, settings_index / 12, CRGB::Red);
+        microGL_drawPixel(settings_index % 12, settings_index / 12, CRGB(255, 0, 0));
     } else {
-        microGL_drawPixel(settings_index % 12, settings_index / 12, CRGB::Green);
+        microGL_drawPixel(settings_index % 12, settings_index / 12, CRGB(0, 255, 0));
     }
 }
 
@@ -106,4 +106,14 @@ void settings_screen_enableDemo(void) {
     setting_screen_drawDigits(val);
 
     setting_screen_indicator(6, app.settings_mode);
+}
+
+void settings_screen_transitionEffect(void) {
+    Setting_t* s = fsm_get_current_setting();
+
+    uint8_t val = (uint8_t)(*(s->value));
+
+    setting_screen_drawDigits(val);
+
+    setting_screen_indicator(7, app.settings_mode);
 }

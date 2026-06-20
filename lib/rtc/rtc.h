@@ -16,6 +16,6 @@ void rtc_init(void);
 void rtc_read(void);
 void rtc_setTime(uint8_t hour, uint8_t minute);
 void rtc_setDate(uint16_t year, uint8_t month, uint8_t day);
-DateTime rtc_getTime(void);
+DateTime* rtc_getTime(void);
 
 #endif /* INC_RTC_H_ */

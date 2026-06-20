@@ -16,5 +16,6 @@ config_t config = {
     .nightMode_end = 7,
     .nightMode_start = 19,
     .auto_sleep = 1,
-    .enable_demo = 0
+    .enable_demo = 0,
+    .transition_effect = 0
 };
