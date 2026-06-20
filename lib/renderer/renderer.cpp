@@ -283,30 +283,40 @@ void renderer_update(void) {
 
     static uint8_t val = 0;
 
-    if (transition.active) {
-        renderer_drawTransition();
-        val = 0;
+    if (app->mode == MODE_NORMAL) {
+        if (transition.active) {
+            renderer_drawTransition();
+            val = 0;
+        } else {
+            clearLayers();
+
+            microGL_setTarget(layer_bg);
+
+            const ScreenDescriptor* screen =
+                &screen_table[app->clock_screen];
+
+            if (screen && screen->render) {
+                screen->render(*now);
+
+                static uint32_t next_tick = 0;
+
+                if (millis() >= next_tick) {
+                    next_tick = millis() + 1000;
+                    microGL_drawPixel(screen->seconds_led.x, screen->seconds_led.y, CRGB(255, 255, 255));
+                    val = 255;
+                } else {
+                    microGL_drawPixel(screen->seconds_led.x, screen->seconds_led.y, CRGB(val, val, val));
+                    val *= 0.90;
+                }
+            }
+        }
     } else {
         clearLayers();
+        
+        settings_render_fn_t current = settings_table[app->settings_screen];
 
-        microGL_setTarget(layer_bg);
-
-        const ScreenDescriptor* screen =
-            &screen_table[app->clock_screen];
-
-        if (screen && screen->render) {
-            screen->render(*now);
-
-            static uint32_t next_tick = 0;
-
-            if (millis() >= next_tick) {
-                next_tick = millis() + 1000;
-                microGL_drawPixel(screen->seconds_led.x, screen->seconds_led.y, CRGB(255, 255, 255));
-                val = 255;
-            } else {
-                microGL_drawPixel(screen->seconds_led.x, screen->seconds_led.y, CRGB(val, val, val));
-                val *= 0.90;
-            }
+        if (current) {
+            current();
         }
     }
 
@@ -314,7 +324,7 @@ void renderer_update(void) {
 
     while (event_manager_popUI(&event)) {
         if (event.type == INPUT_EVENT_DOWN) {
-            //microGL_drawPixel(2, 12, CRGB(0, 255, 0));
+            microGL_drawPixel(0, 12, CRGB(0, 255, 0));
         }
     }
 
