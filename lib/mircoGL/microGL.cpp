@@ -23,7 +23,7 @@ void microGL_drawPixel(uint8_t x, uint8_t y, CRGB color) {
     auto* t = currentRGBTarget;
     if (!t) return;
 
-    uint16_t i = x + y * t->w;
+    uint16_t i = display_pixelMap(x, y);
     t->buffer[i] = color;
 }
 
@@ -31,6 +31,6 @@ void microGL_drawPixel(uint8_t x, uint8_t y, uint8_t value) {
     auto* t = currentMaskTarget;
     if (!t) return;
 
-    uint16_t i = x + y * t->w;
+    uint16_t i = display_pixelMap(x, y);
     t->buffer[i] = value;
 }
