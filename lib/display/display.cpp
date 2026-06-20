@@ -7,7 +7,6 @@ Date:   28-04-2026
 */
 
 #include "display.h"
-#include "config.h"
 #include "daylight_sensor.h"
 
 CRGB led_matrix[NUM_MATRIX_LEDS];
