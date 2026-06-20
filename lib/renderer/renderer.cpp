@@ -19,7 +19,7 @@ Date:   19-05-2026
 // Function pointer types
 // -------------------------
 
-typedef void (*screen_render_fn_t)(const DateTime&);
+typedef void (*screen_render_fn_t)(const DateTime&, bool pickNewColours);
 typedef void (*settings_render_fn_t)(void);
 
 #include "transitions.h"
@@ -68,7 +68,8 @@ static const settings_render_fn_t settings_table[] = {
     settings_screen_nightStart,
     settings_screen_autoSleep,
     settings_screen_enableDemo,
-    settings_screen_transitionEffect
+    settings_screen_transitionEffect,
+    settings_screen_colorMode
 };
 
 // -------------------------
@@ -81,6 +82,8 @@ static const transition_fn_t transitions_table[] = {
     transition_dissolve,
     transition_fade
 };
+
+static bool force_new_colours = false;
 
 // -------------------------
 // Layers
@@ -220,6 +223,7 @@ void renderer_detectScreenChanges(AppState_t* app, DateTime* now)
             effect
         );
 
+        force_new_colours = true;
         last_rtc_time = *now;
     }
 
@@ -233,6 +237,7 @@ void renderer_detectScreenChanges(AppState_t* app, DateTime* now)
             effect
         );
 
+        force_new_colours = true;
         last_screen = current_screen;
     }
 }
@@ -243,23 +248,30 @@ void renderer_detectScreenChanges(AppState_t* app, DateTime* now)
 
 void renderer_drawTransition(void) {
     uint32_t elapsed = millis() - transition.start_ms;
+    static bool first_run = true;
 
-    if (elapsed > transition.duration_ms)
+    if (first_run) {
+        clearLayer(layer_mask);
+
+        microGL_setTarget(layer_bg);
+        if (transition.from_screen && transition.from_screen->render) {
+            transition.from_screen->render(clock_transition.from_time, false);
+        }
+
+        microGL_setTarget(layer_fg);
+        if (transition.to_screen && transition.to_screen->render) {
+            transition.to_screen->render(clock_transition.to_time, force_new_colours);
+            force_new_colours = false;
+        }
+        first_run = false;
+    }
+
+    if (elapsed > transition.duration_ms) {
         elapsed = transition.duration_ms;
+        first_run = true;
+    }
 
     uint8_t t = (elapsed * 255) / transition.duration_ms;
-
-    clearLayers();
-
-    microGL_setTarget(layer_bg);
-    if (transition.from_screen && transition.from_screen->render) {
-        transition.from_screen->render(clock_transition.from_time);
-    }
-
-    microGL_setTarget(layer_fg);
-    if (transition.to_screen && transition.to_screen->render) {
-        transition.to_screen->render(clock_transition.to_time);
-    }
 
     TransitionContext ctx;
     ctx.t = t;
@@ -296,7 +308,13 @@ void renderer_update(void) {
                 &screen_table[app->clock_screen];
 
             if (screen && screen->render) {
-                screen->render(*now);
+                static uint8_t palette_old = app->palette;
+                if (app->palette != palette_old) {
+                    palette_old = app->palette;
+                    force_new_colours = true;
+                }
+                screen->render(*now, force_new_colours);
+                force_new_colours = false;
 
                 static uint32_t next_tick = 0;
 

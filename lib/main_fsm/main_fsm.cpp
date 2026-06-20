@@ -32,13 +32,14 @@ AppState_t* app_get(void) {
 
 Setting_t settings[] = {
     {(uint8_t*)&config.time_format,      0, 1, 1},
-    {(uint8_t*)&config.min_brightness,   0, 255, 5},
+    {(uint8_t*)&config.min_brightness,   5, 255, 5},
     {(uint8_t*)&config.max_brightness,   0, 255, 5},
     {(uint8_t*)&config.nightMode_end,    0, 23, 1},
     {(uint8_t*)&config.nightMode_start,  0, 23, 1},
     {(uint8_t*)&config.auto_sleep,       0, 1, 1},
     {(uint8_t*)&config.enable_demo,      0, 1, 1},
-    {(uint8_t*)&config.transition_effect, 0, 1, 1}
+    {(uint8_t*)&config.transition_effect, 0, 1, 1},
+    {(uint8_t*)&config.color_mode, 0, 2, 1}
 };
 
 const uint8_t SETTINGS_COUNT = sizeof(settings) / sizeof(settings[0]);

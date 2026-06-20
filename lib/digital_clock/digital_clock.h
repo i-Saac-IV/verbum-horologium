@@ -11,6 +11,6 @@ Date:   29-04-2026
 
 #include "RTClib.h"
 
-void digital_clock_render(const DateTime& now);
+void digital_clock_render(const DateTime& now, bool pickNewColours);
 
 #endif /* INC_DIGITAL_CLOCK_H_ */

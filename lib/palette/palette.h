@@ -12,12 +12,18 @@ Date:   20-06-2026
 #include <FastLED.h>
 
 enum PaletteColorId {
-    COLOR_A,
-    COLOR_B,
-    COLOR_C,
-    COLOR_D,
-    COLOR_E,
-    COLOR_F,
+    COLOR_0,
+    COLOR_1,
+    COLOR_2,
+    COLOR_3,
+    COLOR_4,
+    COLOR_5,
+    COLOR_6,
+    COLOR_7,
+    COLOR_8,
+    COLOR_9,
+    COLOR_10,
+    COLOR_11,
     NUM_COLORS
 };
 

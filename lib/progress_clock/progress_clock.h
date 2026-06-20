@@ -11,6 +11,6 @@
 
 #include "RTClib.h"
 
-void progress_clock_render(const DateTime& now);
+void progress_clock_render(const DateTime& now, bool pickNewColours);
 
 #endif /* INC_PROGRESS_CLOCK_H_ */
