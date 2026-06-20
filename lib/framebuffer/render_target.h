@@ -15,8 +15,6 @@ Date:   19-06-2026
 template<typename T>
 struct RenderTarget {
     T* buffer;
-    uint8_t h;
-    uint8_t w;
 };
 
 extern RenderTarget<CRGB> layer_bg;
