@@ -43,11 +43,6 @@ typedef enum {
     SETTINGS_SCREEN_COUNT
 } SettingsScreen_t;
 
-typedef enum {
-    PALETTE_CLASSIC = 0,
-    PALETTE_COUNT
-} Palette_t;
-
 typedef struct {
     AppMode_t mode;
     SettingsMode_t settings_mode;
@@ -55,7 +50,7 @@ typedef struct {
     ClockScreen_t clock_screen;
     SettingsScreen_t settings_screen;
 
-    Palette_t palette;
+    uint8_t palette;
 } AppState_t;
 
 AppState_t* app_get(void);

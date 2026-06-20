@@ -257,7 +257,7 @@ void action_prev_screen(AppState_t *app) {
 }
 
 void action_change_color_pallette(AppState_t* app) {
-    app->palette = (Palette_t)next_index(app->palette, PALETTE_COUNT);
+    app->palette = (uint8_t)next_index(app->palette, 255);
 }
 
 void action_enter_settings(AppState_t* app) {
