@@ -26,7 +26,20 @@ typedef void (*settings_render_fn_t)(void);
 using transition_fn_t = void (*)(const TransitionContext&);
 
 // -------------------------
-// Screen tables
+// Screen descriptor system
+// -------------------------
+
+struct SecondsIndicator {
+    uint8_t x, y;
+};
+
+struct ScreenDescriptor {
+    screen_render_fn_t render;
+    SecondsIndicator seconds_led;
+};
+
+// -------------------------
+// Screens
 // -------------------------
 
 #include "word_clock.h"
@@ -34,12 +47,16 @@ using transition_fn_t = void (*)(const TransitionContext&);
 #include "digital_clock.h"
 #include "progress_clock.h"
 
-static const screen_render_fn_t screen_table[] = {
-    word_clock_render,
-    staircase_clock_render,
-    digital_clock_render,
-    progress_clock_render
+static const ScreenDescriptor screen_table[] = {
+    { word_clock_render,      {1, 7}  },
+    { staircase_clock_render, {1, 7}  },
+    { digital_clock_render,   {2, 12} },
+    { progress_clock_render,  {2, 12}  }
 };
+
+// -------------------------
+// Settings screens
+// -------------------------
 
 #include "settings_screen.h"
 
@@ -54,6 +71,10 @@ static const settings_render_fn_t settings_table[] = {
     settings_screen_transitionEffect
 };
 
+// -------------------------
+// Transitions
+// -------------------------
+
 #include "transitions.h"
 
 static const transition_fn_t transitions_table[] = {
@@ -66,17 +87,17 @@ static const transition_fn_t transitions_table[] = {
 // -------------------------
 
 void clearLayers(void) {
-    fill_solid(layer_bg.buffer, layer_bg.w * layer_bg.h, CRGB::Black);
-    fill_solid(layer_fg.buffer, layer_fg.w * layer_fg.h, CRGB::Black);
-    memset(layer_mask.buffer, 0, layer_mask.w * layer_mask.h);
+    fill_solid(layer_bg.buffer, NUM_MATRIX_LEDS, CRGB::Black);
+    fill_solid(layer_fg.buffer, NUM_MATRIX_LEDS, CRGB::Black);
+    memset(layer_mask.buffer, 0, NUM_MATRIX_LEDS);
 }
 
 void clearLayer(RenderTarget<CRGB>& layer) {
-    fill_solid(layer.buffer, layer.w * layer.h, CRGB::Black);
+    fill_solid(layer.buffer, NUM_MATRIX_LEDS, CRGB::Black);
 }
 
 void clearLayer(RenderTarget<uint8_t>& layer) {
-    memset(layer.buffer, 0, layer.w * layer.h);
+    memset(layer.buffer, 0, NUM_MATRIX_LEDS);
 }
 
 void composeFrame(void) {
@@ -108,8 +129,8 @@ static ClockTransitionState clock_transition;
 struct TransitionState {
     bool active;
 
-    screen_render_fn_t from_screen;
-    screen_render_fn_t to_screen;
+    const ScreenDescriptor* from_screen;
+    const ScreenDescriptor* to_screen;
 
     transition_fn_t effect;
 
@@ -121,7 +142,7 @@ struct TransitionState {
 
 static TransitionState transition;
 
-static screen_render_fn_t last_screen_fn = nullptr;
+static const ScreenDescriptor* last_screen = nullptr;
 static DateTime last_rtc_time;
 
 // -------------------------
@@ -129,7 +150,13 @@ static DateTime last_rtc_time;
 // -------------------------
 
 void renderer_init(void) {
-    last_rtc_time = rtc_getTime();
+    DateTime* now = rtc_getTime();
+
+    last_rtc_time = *now;
+
+    clock_transition.from_time = *now;
+    clock_transition.to_time   = *now;
+
     display_init();
 }
 
@@ -137,9 +164,10 @@ void renderer_init(void) {
 // Transition control
 // -------------------------
 
-void renderer_startTransition(screen_render_fn_t from,
-                              screen_render_fn_t to,
-                              transition_fn_t effect) {
+void renderer_startTransition(const ScreenDescriptor* from,
+                              const ScreenDescriptor* to,
+                              transition_fn_t effect)
+{
     transition.active = true;
     transition.from_screen = from;
     transition.to_screen = to;
@@ -166,57 +194,51 @@ void renderer_updateTransition() {
 // Screen change detection
 // -------------------------
 
-void renderer_detectScreenChanges(AppState_t* app)
+void renderer_detectScreenChanges(AppState_t* app, DateTime* now)
 {
-    if (app->mode != MODE_NORMAL) {
-        return; // only animate clock screens
-    }
+    if (app->mode != MODE_NORMAL) return;
 
-    screen_render_fn_t current_screen_fn =
-        screen_table[app->clock_screen];
+    const ScreenDescriptor* current_screen =
+        &screen_table[app->clock_screen];
 
-    if (last_screen_fn == nullptr) {
-        last_screen_fn = current_screen_fn;
-        last_rtc_time = rtc_getTime();
+    if (last_screen == nullptr) {
+        last_screen = current_screen;
+        last_rtc_time = *now;
         return;
     }
 
-    DateTime now = rtc_getTime();
-
-    // TIME CHANGE TRANSITION (12:04 → 12:05)
-    if (now.minute() != last_rtc_time.minute()) {
+    if (now->minute() != last_rtc_time.minute()) {
         clock_transition.from_time = last_rtc_time;
-        clock_transition.to_time = now;
+        clock_transition.to_time = *now;
 
         transition_fn_t effect =
             transitions_table[config.transition_effect];
 
         renderer_startTransition(
-            current_screen_fn,
-            current_screen_fn,
+            current_screen,
+            current_screen,
             effect
         );
 
-        last_rtc_time = now;
+        last_rtc_time = *now;
     }
 
-    // SCREEN CHANGE TRANSITION
-    if (current_screen_fn != last_screen_fn) {
+    if (current_screen != last_screen) {
         transition_fn_t effect =
             transitions_table[config.transition_effect];
 
         renderer_startTransition(
-            last_screen_fn,
-            current_screen_fn,
+            last_screen,
+            current_screen,
             effect
         );
 
-        last_screen_fn = current_screen_fn;
+        last_screen = current_screen;
     }
 }
 
 // -------------------------
-// Transition render
+// Transition rendering
 // -------------------------
 
 void renderer_drawTransition(void) {
@@ -229,16 +251,14 @@ void renderer_drawTransition(void) {
 
     clearLayers();
 
-    // OLD FRAME (previous time)
     microGL_setTarget(layer_bg);
-    if (transition.from_screen) {
-        transition.from_screen(clock_transition.from_time);
+    if (transition.from_screen && transition.from_screen->render) {
+        transition.from_screen->render(clock_transition.from_time);
     }
 
-    // NEW FRAME (current time)
     microGL_setTarget(layer_fg);
-    if (transition.to_screen) {
-        transition.to_screen(clock_transition.to_time);
+    if (transition.to_screen && transition.to_screen->render) {
+        transition.to_screen->render(clock_transition.to_time);
     }
 
     TransitionContext ctx;
@@ -256,31 +276,36 @@ void renderer_drawTransition(void) {
 
 void renderer_update(void) {
     AppState_t* app = app_get();
+    DateTime* now = rtc_getTime();
 
-    renderer_detectScreenChanges(app);
+    renderer_detectScreenChanges(app, now);
     renderer_updateTransition();
+
+    static uint8_t val = 0;
 
     if (transition.active) {
         renderer_drawTransition();
+        val = 0;
     } else {
         clearLayers();
 
         microGL_setTarget(layer_bg);
 
-        if (app->mode == MODE_NORMAL) {
-            screen_render_fn_t current =
-                screen_table[app->clock_screen];
+        const ScreenDescriptor* screen =
+            &screen_table[app->clock_screen];
 
-            if (current) {
-                current(rtc_getTime());
-            }
-        }
-        else {
-            settings_render_fn_t current =
-                settings_table[app->settings_screen];
+        if (screen && screen->render) {
+            screen->render(*now);
 
-            if (current) {
-                current();
+            static uint32_t next_tick = 0;
+
+            if (millis() >= next_tick) {
+                next_tick = millis() + 1000;
+                microGL_drawPixel(screen->seconds_led.x, screen->seconds_led.y, CRGB(255, 255, 255));
+                val = 255;
+            } else {
+                microGL_drawPixel(screen->seconds_led.x, screen->seconds_led.y, CRGB(val, val, val));
+                val *= 0.90;
             }
         }
     }
@@ -289,7 +314,7 @@ void renderer_update(void) {
 
     while (event_manager_popUI(&event)) {
         if (event.type == INPUT_EVENT_DOWN) {
-            microGL_drawPixel(1, 7, CRGB(255, 255, 255));
+            //microGL_drawPixel(2, 12, CRGB(0, 255, 0));
         }
     }
 
