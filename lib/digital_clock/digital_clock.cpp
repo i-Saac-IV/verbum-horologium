@@ -10,7 +10,6 @@ Date:   28-04-2026
 
 #include "microGL.h"
 #include "config.h"
-#include "palette.h"
 
 void digital_clock_drawHours(uint8_t hour);
 void digital_clock_drawMinutes(uint8_t minute);
@@ -18,7 +17,9 @@ void digital_clock_drawMinutes(uint8_t minute);
 static CRGB color_a;
 static CRGB color_b;
 
-void digital_clock_render(const DateTime& now, bool pickNewColours) {
+void digital_clock_render(const DateTime& now, Palette colors) {
+    
+    /*
     if (pickNewColours) {
         if (config.color_mode == COLOR_MODE_PALETTE) {
             color_a = palette_getColor(COLOR_0);
@@ -38,6 +39,11 @@ void digital_clock_render(const DateTime& now, bool pickNewColours) {
             color_b = CHSV(hue + 128, sat, val);
         }
     }
+
+    */
+
+    color_a = colors.colors[0];
+    color_b = colors.colors[6];
 
     digital_clock_drawHours(now.hour());
     digital_clock_drawMinutes(now.minute());

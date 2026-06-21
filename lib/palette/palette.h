@@ -33,6 +33,8 @@ struct Palette {
 
 extern const uint8_t NUM_PALETTES;
 
+extern const Palette* palettes[];
+
 CRGB palette_getColor(PaletteColorId color);
 
 #endif /* INC_PALETTE_H_ */

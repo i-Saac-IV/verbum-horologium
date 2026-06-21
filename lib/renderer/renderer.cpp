@@ -13,13 +13,14 @@ Date:   19-05-2026
 #include "microGL.h"
 #include "config.h"
 #include "rtc.h"
+#include "palette.h"
 #include <stdlib.h>
 
 // -------------------------
 // Function pointer types
 // -------------------------
 
-typedef void (*screen_render_fn_t)(const DateTime&, bool pickNewColours);
+typedef void (*screen_render_fn_t)(const DateTime&, Palette colors);
 typedef void (*settings_render_fn_t)(void);
 
 #include "transitions.h"
@@ -83,7 +84,8 @@ static const transition_fn_t transitions_table[] = {
     transition_fade
 };
 
-static bool force_new_colours = false;
+static Palette old_palette;
+static Palette current_palette;
 
 // -------------------------
 // Layers
@@ -160,6 +162,9 @@ void renderer_init(void) {
     clock_transition.from_time = *now;
     clock_transition.to_time   = *now;
 
+    old_palette = palettes[app->palette % NUM_PALETTES];
+    current_palette = old_palette;
+
     display_init();
 }
 
@@ -203,6 +208,11 @@ void renderer_detectScreenChanges(AppState_t* app, DateTime* now)
 
     const ScreenDescriptor* current_screen =
         &screen_table[app->clock_screen];
+
+    if (current_palette != palettes[app->palette]) {
+        old_palette = current_palette;
+        current_palette = palettes[app->palette];
+    }
 
     if (last_screen == nullptr) {
         last_screen = current_screen;
@@ -255,12 +265,12 @@ void renderer_drawTransition(void) {
 
         microGL_setTarget(layer_bg);
         if (transition.from_screen && transition.from_screen->render) {
-            transition.from_screen->render(clock_transition.from_time, false);
+            transition.from_screen->render(clock_transition.from_time, *palettes[0]);
         }
 
         microGL_setTarget(layer_fg);
         if (transition.to_screen && transition.to_screen->render) {
-            transition.to_screen->render(clock_transition.to_time, force_new_colours);
+            transition.to_screen->render(clock_transition.to_time, *palettes[1]);
             force_new_colours = false;
         }
         first_run = false;
@@ -313,7 +323,7 @@ void renderer_update(void) {
                     palette_old = app->palette;
                     force_new_colours = true;
                 }
-                screen->render(*now, force_new_colours);
+                screen->render(*now, *palettes[3]);
                 force_new_colours = false;
 
                 static uint32_t next_tick = 0;

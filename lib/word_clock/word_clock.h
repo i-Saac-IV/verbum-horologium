@@ -11,7 +11,8 @@ Date:   17-05-2026
 
 #include <Arduino.h>
 #include "RTClib.h"
+#include "palette.h"
 
-void word_clock_render(const DateTime& now, bool pickNewColours);
+void word_clock_render(const DateTime& now, Palette colors);
 
 #endif /* INC_WORD_CLOCK_H_ */
