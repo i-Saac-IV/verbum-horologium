@@ -5,3 +5,33 @@
 compile_commands.json
 verbum-horologium.code-workspace
 .clangd
+
+# VS code file
+.vscode/
+
+# Build files
+/build/
+/Debug/
+/Release/
+
+# CubeMX
+.project
+.cproject
+.settings/
+.metadata/
+.stm32env
+
+# KiCAD
+*.kicad_prl
+*.bak
+*.tmp
+*-cache.lib
+*-rescue.lib
+*.net
+*.dsn
+*.ses
+*.lck
+.history/
+*-backups/
+gerbers/
+*_temp/
