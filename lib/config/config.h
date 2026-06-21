@@ -17,14 +17,8 @@ typedef enum {
     TIME_FORMAT_24H
 } time_format_t;
 
-typedef enum {
-    COLOR_MODE_PALETTE = 0,
-    COLOR_MODE_PALETTE_RANDOM,
-    COLOR_MODE_RANDOM
-} color_mode_t;
-
 typedef struct {
-    uint8_t color_mode;
+    uint8_t color_palette;
     uint8_t time_format; 
     uint8_t min_brightness;
     uint8_t max_brightness;

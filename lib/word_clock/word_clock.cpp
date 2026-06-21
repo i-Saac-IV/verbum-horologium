@@ -7,23 +7,13 @@ Date:   17-05-2026
 */
 
 #include "word_clock.h"
-#include "word_layout.h"
 
-static CRGB color_a;
-static CRGB color_b;
-static CRGB color_c;
-static CRGB color_d;
+#include "word_layout.h"
 
 void word_clock_drawClock(uint8_t hour, uint8_t minute);
 void word_clock_drawHours(uint8_t hour);
 
-void word_clock_render(const DateTime& now, Palette colors) {
-
-    color_a = colors.colors[0];
-    color_b = colors.colors[6];
-    color_c = colors.colors[4];
-    color_d = colors.colors[8];
-
+void word_clock_render(const DateTime& now) {
     word_clock_drawClock(now.hour(), now.minute());
 }
 
@@ -32,62 +22,62 @@ void word_clock_drawClock(uint8_t hour, uint8_t minute) {
 
     switch (minute) {
         case 0:
-            word_layout_drawWord(WORD_O_CLOCK, color_b);
+            word_layout_drawWord(WORD_O_CLOCK, CHSV(0, 255, 255));
             break;
 
         case 1:
-            word_layout_drawWord(WORD_FIVE_MINUTES_TO, color_c);
-            word_layout_drawWord(WORD_PAST, color_d);
+            word_layout_drawWord(WORD_FIVE_MINUTES_TO, CHSV(0, 255, 255));
+            word_layout_drawWord(WORD_PAST, CHSV(30, 255, 255));
             break;
 
         case 2:
-            word_layout_drawWord(WORD_TEN_MINUTES_TO, color_c);
-            word_layout_drawWord(WORD_PAST, color_d);
+            word_layout_drawWord(WORD_TEN_MINUTES_TO, CHSV(0, 255, 255));
+            word_layout_drawWord(WORD_PAST, CHSV(30, 255, 255));
             break;
 
         case 3:
-            word_layout_drawWord(WORD_QUARTER, color_c);
-            word_layout_drawWord(WORD_PAST, color_d);
+            word_layout_drawWord(WORD_QUARTER, CHSV(0, 255, 255));
+            word_layout_drawWord(WORD_PAST, CHSV(30, 255, 255));
             break;
 
         case 4:
-            word_layout_drawWord(WORD_TWENTY_MINUTE, color_b);
+            word_layout_drawWord(WORD_TWENTY_MINUTE, CHSV(0, 255, 255));
             break;
 
         case 5:
-            word_layout_drawWord(WORD_TWENTY_MINUTE, color_c);
-            word_layout_drawWord(WORD_TY_FIVE_MINUTE, color_d);
+            word_layout_drawWord(WORD_TWENTY_MINUTE, CHSV(0, 255, 255));
+            word_layout_drawWord(WORD_TY_FIVE_MINUTE, CHSV(30, 255, 255));
             break;
 
         case 6:
-            word_layout_drawWord(WORD_HALF, color_c);
-            word_layout_drawWord(WORD_PAST, color_d);
+            word_layout_drawWord(WORD_HALF, CHSV(0, 255, 255));
+            word_layout_drawWord(WORD_PAST, CHSV(30, 255, 255));
             break;
 
         case 7:
-            word_layout_drawWord(WORD_THIRTY_MINUTE, color_c);
-            word_layout_drawWord(WORD_TY_FIVE_MINUTE, color_d);
+            word_layout_drawWord(WORD_THIRTY_MINUTE, CHSV(0, 255, 255));
+            word_layout_drawWord(WORD_TY_FIVE_MINUTE, CHSV(30, 255, 255));
             break;
             
         case 8:
-            word_layout_drawWord(WORD_FORTY_MINUTE, color_b);
+            word_layout_drawWord(WORD_FORTY_MINUTE, CHSV(0, 255, 255));
             break;
 
         case 9:
-            word_layout_drawWord(WORD_QUARTER, color_c);
-            word_layout_drawWord(WORD_TO, color_d);
+            word_layout_drawWord(WORD_QUARTER, CHSV(0, 255, 255));
+            word_layout_drawWord(WORD_TO, CHSV(30, 255, 255));
             hour++;
             break;
 
         case 10:
-            word_layout_drawWord(WORD_TEN_MINUTES_TO, color_c);
-            word_layout_drawWord(WORD_TO, color_d);
+            word_layout_drawWord(WORD_TEN_MINUTES_TO, CHSV(0, 255, 255));
+            word_layout_drawWord(WORD_TO, CHSV(30, 255, 255));
             hour++;
             break;
 
         case 11:
-            word_layout_drawWord(WORD_FIVE_MINUTES_TO, color_c);
-            word_layout_drawWord(WORD_TO, color_d);
+            word_layout_drawWord(WORD_FIVE_MINUTES_TO, CHSV(0, 255, 255));
+            word_layout_drawWord(WORD_TO, CHSV(30, 255, 255));
             hour++;
             break;
 
@@ -103,55 +93,55 @@ void word_clock_drawHours(uint8_t hour) {
 
     switch (hour) {
         case 0:
-            word_layout_drawWord(WORD_MIDNIGHT, color_a);
+            word_layout_drawWord(WORD_MIDNIGHT, CHSV(60, 255, 255));
             break;
 
         case 1:
-            word_layout_drawWord(WORD_ONE_HOUR, color_a);
+            word_layout_drawWord(WORD_ONE_HOUR, CHSV(60, 255, 255));
             break;
 
         case 2:
-            word_layout_drawWord(WORD_TWO_HOUR, color_a);
+            word_layout_drawWord(WORD_TWO_HOUR, CHSV(60, 255, 255));
             break;
 
         case 3:
-            word_layout_drawWord(WORD_THREE_HOUR, color_a);
+            word_layout_drawWord(WORD_THREE_HOUR, CHSV(60, 255, 255));
             break;
 
         case 4:
-            word_layout_drawWord(WORD_FOUR_HOUR, color_a);
+            word_layout_drawWord(WORD_FOUR_HOUR, CHSV(60, 255, 255));
             break;
 
         case 5:
-            word_layout_drawWord(WORD_FIVE_HOUR, color_a);
+            word_layout_drawWord(WORD_FIVE_HOUR, CHSV(60, 255, 255));
             break;
 
         case 6:
-            word_layout_drawWord(WORD_SIX_HOUR, color_a);
+            word_layout_drawWord(WORD_SIX_HOUR, CHSV(60, 255, 255));
             break;
 
         case 7:
-            word_layout_drawWord(WORD_SEVEN_HOUR, color_a);
+            word_layout_drawWord(WORD_SEVEN_HOUR, CHSV(60, 255, 255));
             break;
 
         case 8:
-            word_layout_drawWord(WORD_EIGHT_HOUR, color_a);
+            word_layout_drawWord(WORD_EIGHT_HOUR, CHSV(60, 255, 255));
             break;
 
         case 9:
-            word_layout_drawWord(WORD_NINE_HOUR, color_a);
+            word_layout_drawWord(WORD_NINE_HOUR, CHSV(60, 255, 255));
             break;
 
         case 10:
-            word_layout_drawWord(WORD_TEN_HOUR, color_a);
+            word_layout_drawWord(WORD_TEN_HOUR, CHSV(60, 255, 255));
             break;
 
         case 11:
-            word_layout_drawWord(WORD_ELEVEN_HOUR, color_a);
+            word_layout_drawWord(WORD_ELEVEN_HOUR, CHSV(60, 255, 255));
             break;
 
         case 12:
-            word_layout_drawWord(WORD_TWELVE_HOUR, color_a);
+            word_layout_drawWord(WORD_TWELVE_HOUR, CHSV(60, 255, 255));
             break;
 
         default:

@@ -9,7 +9,7 @@ Date:   01-05-2026
 #include "config.h"
 
 config_t config = {
-    .color_mode = COLOR_MODE_PALETTE_RANDOM,
+    .color_palette = 0,
     .time_format = TIME_FORMAT_12H,
     .min_brightness = 0,
     .max_brightness = 50,

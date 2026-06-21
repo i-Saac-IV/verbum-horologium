@@ -10,8 +10,7 @@
 #define INC_PROGRESS_CLOCK_H_
 
 #include "RTClib.h"
-#include "palette.h"
 
-void progress_clock_render(const DateTime& now, Palette colors);
+void progress_clock_render(const DateTime& now);
 
 #endif /* INC_PROGRESS_CLOCK_H_ */

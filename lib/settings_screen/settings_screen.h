@@ -17,6 +17,5 @@ void settings_screen_nightStart(void);
 void settings_screen_autoSleep(void);
 void settings_screen_enableDemo(void);
 void settings_screen_transitionEffect(void);
-void settings_screen_colorMode(void);
 
 #endif /* INC_SETTINGS_SCREEN_H_ */
