@@ -28,6 +28,7 @@ typedef struct Task {
 #include "main_fsm.h"
 #include "renderer.h"
 #include "demo_mode.h"
+#include "startup_animation.h"
 
 static Task_t tasks[TASK_COUNT] = {
 
@@ -85,6 +86,14 @@ static Task_t tasks[TASK_COUNT] = {
         .frequency = UPDATE_DEMO_MODE_FREQUENCY_HZ,
         .enabled = true,
         .persistent = true
+    },
+
+    [RUN_STARTUP] = {
+        .taskFunction = nullptr,
+        .taskInitFunction = startup_animation_init,
+        .frequency = NULL,
+        .enabled = true,
+        .persistent = false
     }
 };
 
@@ -123,7 +132,9 @@ bool task_scheduler_runQuery(Task_id_t taskId) {
 }
 
 void task_scheduler_executeTaskFunc(Task_id_t taskId) {
-    tasks[taskId].taskFunction();
+    if (tasks[taskId].taskFunction) {
+        tasks[taskId].taskFunction();
+    }
 }
 
 void task_scheduler_executeTask(Task_id_t taskId) {
@@ -143,7 +154,9 @@ void task_scheduler_init(void) {
 
 void task_scheduler_initAllTasks(void) {
     for (uint8_t i = 0; i < TASK_COUNT; i++) {
-        tasks[i].taskInitFunction();
+        if (tasks[i].taskInitFunction) {
+            tasks[i].taskInitFunction();
+        }
     }
 }
 

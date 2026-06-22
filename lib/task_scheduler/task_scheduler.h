@@ -19,6 +19,7 @@ typedef enum Task_id {
     UPDATE_RENDERER,
     UPDATE_FSM,
     UPDATE_DEMO_MODE,
+    RUN_STARTUP,
     TASK_COUNT
 } Task_id_t;
 
