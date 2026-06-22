@@ -9,9 +9,9 @@ Date:   01-05-2026
 #include "config.h"
 
 config_t config = {
-    .color_palette = 0,
+    .color_mode = 0,
     .time_format = TIME_FORMAT_12H,
-    .min_brightness = 0,
+    .min_brightness = 5,
     .max_brightness = 50,
     .nightMode_end = 7,
     .nightMode_start = 19,

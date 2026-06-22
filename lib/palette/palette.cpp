@@ -7,7 +7,6 @@ Date:   20-06-2026
 */
 
 #include "palette.h"
-#include "main_fsm.h"
 
 /*
 const Palette palette_TEMPLATE = {

@@ -40,13 +40,9 @@ typedef enum {
     SETTINGS_SCREEN_AUTO_SLEEP,
     SETTINGS_SCREEN_ENABLE_DEMO,
     SETTINGS_SCREEN_TRANSITION_EFFECT,
+    SETTINGS_SCREEN_COLOR_MODE,
     SETTINGS_SCREEN_COUNT
 } SettingsScreen_t;
-
-typedef enum {
-    PALETTE_CLASSIC = 0,
-    PALETTE_COUNT
-} Palette_t;
 
 typedef struct {
     AppMode_t mode;
@@ -55,7 +51,7 @@ typedef struct {
     ClockScreen_t clock_screen;
     SettingsScreen_t settings_screen;
 
-    Palette_t palette;
+    uint8_t palette;
 } AppState_t;
 
 AppState_t* app_get(void);

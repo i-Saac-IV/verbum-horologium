@@ -18,7 +18,7 @@ typedef enum {
 } time_format_t;
 
 typedef struct {
-    uint8_t color_palette;
+    uint8_t color_mode;
     uint8_t time_format; 
     uint8_t min_brightness;
     uint8_t max_brightness;
