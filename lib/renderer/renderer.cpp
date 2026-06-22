@@ -132,6 +132,7 @@ static TransitionState transition;
 static const ScreenDescriptor* last_screen = nullptr;
 static DateTime last_rtc_time;
 
+static uint8_t last_palette_index = 0;
 static Palette current_palette;
 static Palette target_palette;
 
@@ -140,8 +141,10 @@ static Palette target_palette;
 // -------------------------
 
 void renderer_init(void) {
+    AppState_t* app = app_get();
     DateTime* now = rtc_getTime();
     last_rtc_time = *now;
+    target_palette = *palettes[app->palette % NUM_PALETTES];
     display_init();
 }
 
@@ -170,6 +173,30 @@ void renderer_updateTransition() {
     }
 }
 
+Palette makeRandomPalette() {
+    Palette p;
+
+    for (int i = 0; i < NUM_COLORS; i++) {
+        p.colors[i] = CHSV(random(100, 255), random(175, 255), 255);
+    }
+
+    return p;
+}
+
+Palette shuffledPalette(const Palette& palette) {
+    Palette result = palette;
+
+    for (int i = NUM_COLORS - 1; i > 0; --i) {
+        int j = random(i + 1);
+
+        CRGB temp = result.colors[i];
+        result.colors[i] = result.colors[j];
+        result.colors[j] = temp;
+    }
+
+    return result;
+}
+
 void renderer_detectScreenChanges(AppState_t* app, DateTime* now)
 {
     if (app->mode != MODE_NORMAL) {
@@ -182,7 +209,16 @@ void renderer_detectScreenChanges(AppState_t* app, DateTime* now)
 
     const ScreenDescriptor* current_screen = &screen_table[app->clock_screen];
 
-    target_palette = *palettes[app->palette % NUM_PALETTES];
+    if (last_palette_index != app->palette) {
+        if (config.color_mode == PALETTE) {
+            target_palette = *palettes[app->palette % NUM_PALETTES];
+        } else if (config.color_mode == PALETTE_RANDOMISED) {
+            target_palette = shuffledPalette(*palettes[app->palette % NUM_PALETTES]);
+        } else if (config.color_mode == PALETTE_RANDOM) {
+            target_palette = makeRandomPalette();
+        }
+        last_palette_index = app->palette;
+    }   
 
     if (last_screen == nullptr) {
         last_screen = current_screen;
@@ -196,6 +232,14 @@ void renderer_detectScreenChanges(AppState_t* app, DateTime* now)
     bool palette_changed = !palette_equal(current_palette, target_palette);
 
     if (screen_changed || minute_changed || palette_changed) {
+
+        if (!palette_changed) {
+            if (config.color_mode == PALETTE_RANDOMISED) {
+                target_palette = shuffledPalette(*palettes[app->palette % NUM_PALETTES]);
+            } else if (config.color_mode == PALETTE_RANDOM) {
+                target_palette = makeRandomPalette();
+            }
+        }
 
         RenderState from = {
             last_screen,

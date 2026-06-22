@@ -27,6 +27,12 @@ enum PaletteColorId {
     NUM_COLORS
 };
 
+typedef enum {
+    PALETTE = 0,
+    PALETTE_RANDOMISED,
+    PALETTE_RANDOM
+} PaletteMode_t;
+
 struct Palette {
     CRGB colors[NUM_COLORS];
 };
