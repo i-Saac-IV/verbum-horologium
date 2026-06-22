@@ -24,6 +24,8 @@ void microGL_setTarget(RenderTarget<CRGB>& target);
 void microGL_setTarget(RenderTarget<uint8_t>& target);
 void microGL_drawPixel(uint8_t x, uint8_t y, CRGB color);
 void microGL_drawPixel(uint8_t x, uint8_t y, uint8_t value);
+void microGL_clearLayers(void);
+void microGL_composeFrame(void);
 
 template<typename T>
 void microGL_drawLine(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2, T value) {
