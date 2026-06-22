@@ -13,7 +13,7 @@ Date:   17-05-2026
 void word_clock_drawClock(uint8_t hour, uint8_t minute);
 void word_clock_drawHours(uint8_t hour);
 
-void word_clock_render(const DateTime& now) {
+void word_clock_render(const DateTime& now, const Palette& colors) {
     word_clock_drawClock(now.hour(), now.minute());
 }
 

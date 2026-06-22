@@ -14,7 +14,7 @@
 void progress_clock_display12HourTime(DateTime now);
 void progress_clock_display24HourTime(DateTime now);
 
-void progress_clock_render(const DateTime& now) {
+void progress_clock_render(const DateTime& now, const Palette& colors) {
     if (config.time_format == TIME_FORMAT_12H) {
         progress_clock_display12HourTime(now);
     } else {
