@@ -177,7 +177,7 @@ Palette makeRandomPalette() {
     Palette p;
 
     for (int i = 0; i < NUM_COLORS; i++) {
-        p.colors[i] = CHSV(random(100, 255), random(175, 255), 255);
+        p.colors[i] = CHSV(random(0, 255), random(0, 255), random(160, 255));
     }
 
     return p;
