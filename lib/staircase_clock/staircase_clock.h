@@ -10,7 +10,8 @@ Date:   30-04-2026
 #define INC_STAIRCASE_CLOCK_H_
 
 #include "RTClib.h"
+#include "palette.h"
 
-void staircase_clock_render(const DateTime& now);
+void staircase_clock_render(const DateTime& now, const Palette& colors);
 
 #endif /* INC_STAIRCASE_CLOCK_H_ */
