@@ -15,6 +15,7 @@ Date:   19-05-2026
 #include "rtc.h"
 #include "transitions.h"
 #include "palette.h"
+#include "daylight_sensor.h"
 #include <stdlib.h>
 #include <string.h>
 
@@ -247,6 +248,19 @@ void renderer_drawTransition(void) {
     }
 }
 
+bool night_mode(DateTime& now) {
+    if (!config.auto_sleep) {
+        return false;
+    }
+
+    if (now.hour() >= config.nightMode_start || now.hour() <= config.nightMode_end) {
+        if (daylight_sensor_getScaledBrightness(FRONT_SENSOR) < config.min_brightness + 10) {
+            return true;
+        }
+    }
+    return false;
+}
+
 void renderer_update(void) {
     AppState_t* app = app_get();
     DateTime* now = rtc_getTime();
@@ -259,28 +273,32 @@ void renderer_update(void) {
     if (app->mode == MODE_NORMAL) {
 
         if (transition.active) {
-            renderer_drawTransition();
-            val = 0;
+            if (!night_mode(*now)) {
+                renderer_drawTransition();
+                val = 0;
+            }
         } else {
             clearLayers();
 
-            microGL_setTarget(layer_bg);
-
             const ScreenDescriptor* screen = &screen_table[app->clock_screen];
 
-            if (screen && screen->render) {
-                screen->render(*now, current_palette);
+            if (!night_mode(*now)) {
+                microGL_setTarget(layer_bg);
 
-                static uint32_t next_tick = 0;
-
-                if (millis() >= next_tick) {
-                    next_tick = millis() + 1000;
-                    microGL_drawPixel(screen->seconds_led.x, screen->seconds_led.y, CRGB(255, 255, 255));
-                    val = 255;
-                } else {
-                    microGL_drawPixel(screen->seconds_led.x, screen->seconds_led.y, CRGB(val, val, val));
-                    val *= 0.90;
+                if (screen && screen->render) {
+                    screen->render(*now, current_palette);
                 }
+            }
+
+            static uint32_t next_tick = 0;
+
+            if (millis() >= next_tick) {
+                next_tick = millis() + 1000;
+                microGL_drawPixel(screen->seconds_led.x, screen->seconds_led.y, CRGB(255, 255, 255));
+                val = 255;
+            } else {
+                microGL_drawPixel(screen->seconds_led.x, screen->seconds_led.y, CRGB(val, val, val));
+                val *= 0.90;
             }
         }
     } else {
