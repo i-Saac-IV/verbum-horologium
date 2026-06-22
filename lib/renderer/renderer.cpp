@@ -80,27 +80,6 @@ static const transition_fn_t transitions_table[] = {
 // End of adjustable code
 // -------------------------
 
-void clearLayers(void) {
-    fill_solid(layer_bg.buffer, NUM_MATRIX_LEDS, CRGB::Black);
-    fill_solid(layer_fg.buffer, NUM_MATRIX_LEDS, CRGB::Black);
-    memset(layer_mask.buffer, 0, NUM_MATRIX_LEDS);
-}
-
-void composeFrame(void) {
-    for (int i = 0; i < NUM_MATRIX_LEDS; i++) {
-        CRGB bgc = layer_bg.buffer[i];
-        CRGB fgc = layer_fg.buffer[i];
-        uint8_t m = layer_mask.buffer[i];
-
-        CRGB out;
-        out.r = (fgc.r * m + bgc.r * (255 - m)) >> 8;
-        out.g = (fgc.g * m + bgc.g * (255 - m)) >> 8;
-        out.b = (fgc.b * m + bgc.b * (255 - m)) >> 8;
-
-        led_matrix[i] = out;
-    }
-}
-
 static inline bool palette_equal(const Palette& a, const Palette& b) {
     for (uint8_t i = 0; i < NUM_COLORS; i++) {
         if (a.colors[i] != b.colors[i]) return false;
@@ -274,7 +253,7 @@ void renderer_drawTransition(void) {
 
     uint8_t t = (elapsed * 255) / transition.duration_ms;
 
-    clearLayers();
+    microGL_clearLayers();
 
     microGL_setTarget(layer_bg);
     if (transition.from.screen) {
@@ -325,7 +304,7 @@ void renderer_update(void) {
                 val = 0;
             }
         } else {
-            clearLayers();
+            microGL_clearLayers();
 
             const ScreenDescriptor* screen = &screen_table[app->clock_screen];
 
@@ -349,7 +328,8 @@ void renderer_update(void) {
             }
         }
     } else {
-        clearLayers();
+        microGL_clearLayers();
+        microGL_setTarget(layer_bg);
 
         settings_render_fn_t current = settings_table[app->settings_screen];
 
@@ -366,6 +346,6 @@ void renderer_update(void) {
         }
     }
 
-    composeFrame();
+    microGL_composeFrame();
     display_show();
 }
