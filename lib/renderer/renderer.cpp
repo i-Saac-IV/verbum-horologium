@@ -16,6 +16,7 @@ Date:   19-05-2026
 #include "transitions.h"
 #include "palette.h"
 #include "daylight_sensor.h"
+#include "demo_mode.h"
 #include <stdlib.h>
 #include <string.h>
 
@@ -218,6 +219,7 @@ void renderer_detectScreenChanges(AppState_t* app, DateTime* now)
             target_palette = makeRandomPalette();
         }
         last_palette_index = app->palette;
+        demo_mode_resetTimer(SHORT_PAUSE);
     }   
 
     if (last_screen == nullptr) {
@@ -239,6 +241,7 @@ void renderer_detectScreenChanges(AppState_t* app, DateTime* now)
             } else if (config.color_mode == PALETTE_RANDOM) {
                 target_palette = makeRandomPalette();
             }
+            demo_mode_resetTimer(SHORT_PAUSE);
         }
 
         RenderState from = {

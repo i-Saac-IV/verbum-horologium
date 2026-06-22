@@ -19,12 +19,21 @@ const Palette palette_TEMPLATE = {
 };
 */
 
-const Palette palette_rainbow = {
+const Palette palette_rainbow_a = {
     .colors = {
         [COLOR_0]   = CHSV(0, 255, 255),
         [COLOR_1]   = CHSV(64, 255, 255),
         [COLOR_2]   = CHSV(128, 255, 255),
         [COLOR_3]   = CHSV(192, 255, 255)
+    }
+};
+
+const Palette palette_rainbow_b = {
+    .colors = {
+        [COLOR_0]   = CHSV(32, 255, 255),
+        [COLOR_1]   = CHSV(96, 255, 255),
+        [COLOR_2]   = CHSV(160, 255, 255),
+        [COLOR_3]   = CHSV(224, 255, 255)
     }
 };
 
@@ -74,7 +83,8 @@ const Palette palette_office = {
 };
 
 const Palette* palettes[] = {
-    &palette_rainbow,
+    &palette_rainbow_a,
+    &palette_rainbow_b,
     &palette_warm,
     &palette_cool,
     &palette_ocean,
