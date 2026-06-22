@@ -125,7 +125,22 @@ static const Transition_t app_table[] = {
     { MODE_NORMAL,
         {INPUT_EVENT_LONG_PRESS, INPUT_SOURCE_BUTTON_TOP},
         MODE_SETTINGS,
-        action_enter_settings }
+        action_enter_settings },
+
+    { MODE_NORMAL,
+        {INPUT_EVENT_NEXT_SCREEN, INPUT_SOURCE_DEMO_MODE},
+        MODE_NORMAL,
+        action_next_screen },
+
+    { MODE_NORMAL,
+        {INPUT_EVENT_PREV_SCREEN, INPUT_SOURCE_DEMO_MODE},
+        MODE_NORMAL,
+        action_prev_screen },
+
+    { MODE_NORMAL,
+        {INPUT_EVENT_NEXT_COLOR, INPUT_SOURCE_DEMO_MODE},
+        MODE_NORMAL,
+        action_change_color_pallette },
 };
 
 // =====================================================

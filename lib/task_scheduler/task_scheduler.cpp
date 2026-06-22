@@ -27,6 +27,7 @@ typedef struct Task {
 #include "buttons.h"
 #include "main_fsm.h"
 #include "renderer.h"
+#include "demo_mode.h"
 
 static Task_t tasks[TASK_COUNT] = {
 
@@ -74,6 +75,14 @@ static Task_t tasks[TASK_COUNT] = {
         .taskFunction = fsm_update,
         .taskInitFunction = fsm_init,
         .frequency = UPDATE_FSM_FREQUENCY_HZ,
+        .enabled = true,
+        .persistent = true
+    },
+
+    [UPDATE_DEMO_MODE] = {
+        .taskFunction = demo_mode_update,
+        .taskInitFunction = demo_mode_init,
+        .frequency = UPDATE_DEMO_MODE_FREQUENCY_HZ,
         .enabled = true,
         .persistent = true
     }
