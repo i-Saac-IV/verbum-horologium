@@ -24,10 +24,10 @@ void staircase_clock_drawHours(uint8_t hour, const Palette& colors) {
         hour = (hour % 12 == 0) ? 12 : hour % 12;
     }
     microGL_draw3x5Digit(0, 0, hour / 10, colors.colors[COLOR_0]);
-    microGL_draw3x5Digit(3, 2, hour % 10, colors.colors[COLOR_3]);
+    microGL_draw3x5Digit(3, 2, hour % 10, colors.colors[COLOR_1]);
 }
 
 void staircase_clock_drawMinutes(uint8_t minute, const Palette& colors) {
-    microGL_draw3x5Digit(6, 5, minute / 10, colors.colors[COLOR_6]);
-    microGL_draw3x5Digit(9, 7, minute % 10, colors.colors[COLOR_9]);
+    microGL_draw3x5Digit(6, 5, minute / 10, colors.colors[COLOR_2]);
+    microGL_draw3x5Digit(9, 7, minute % 10, colors.colors[COLOR_3]);
 }

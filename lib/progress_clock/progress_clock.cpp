@@ -31,7 +31,7 @@ void progress_clock_display12HourTime(DateTime now, const Palette& colors) {
     }
 
     if (minute > 0) {
-        microGL_fillRectangle(0, hour, minute - 1, hour, colors.colors[COLOR_6]);
+        microGL_fillRectangle(0, hour, minute - 1, hour, colors.colors[COLOR_2]);
     }
 }
 
@@ -44,13 +44,13 @@ void progress_clock_display24HourTime(DateTime now, const Palette& colors) {
             microGL_fillRectangle(DISPLAY_WIDTH / 2, 0, DISPLAY_WIDTH - 1, now.hour() % 12 - 1, colors.colors[COLOR_0]);
 
             if (minute > 0) {
-                microGL_fillRectangle(DISPLAY_WIDTH / 2, now.hour() % 12, minute - 1 + DISPLAY_WIDTH / 2, now.hour() % 12, colors.colors[COLOR_6]);
+                microGL_fillRectangle(DISPLAY_WIDTH / 2, now.hour() % 12, minute - 1 + DISPLAY_WIDTH / 2, now.hour() % 12, colors.colors[COLOR_2]);
             }
         } else {
             microGL_fillRectangle(0, 0, DISPLAY_WIDTH / 2 - 1, now.hour() % 12 - 1, colors.colors[COLOR_0]);
 
             if (minute > 0) {
-                microGL_fillRectangle(0, now.hour() % 12, minute - 1, now.hour() % 12, colors.colors[COLOR_6]);
+                microGL_fillRectangle(0, now.hour() % 12, minute - 1, now.hour() % 12, colors.colors[COLOR_2]);
             }
         }
     }

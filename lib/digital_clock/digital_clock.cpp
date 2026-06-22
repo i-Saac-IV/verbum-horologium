@@ -28,6 +28,6 @@ void digital_clock_drawHours(uint8_t hour, const Palette& colors) {
 }
 
 void digital_clock_drawMinutes(uint8_t minute, const Palette& colors) {
-    microGL_draw4x6Digit(1, 6, minute / 10, colors.colors[COLOR_6]);
-    microGL_draw4x6Digit(7, 6, minute % 10, colors.colors[COLOR_6]);
+    microGL_draw4x6Digit(1, 6, minute / 10, colors.colors[COLOR_2]);
+    microGL_draw4x6Digit(7, 6, minute % 10, colors.colors[COLOR_2]);
 }

@@ -22,62 +22,62 @@ void word_clock_drawClock(uint8_t hour, uint8_t minute, const Palette& colors) {
 
     switch (minute) {
         case 0:
-            word_layout_drawWord(WORD_O_CLOCK, colors.colors[COLOR_6]);
+            word_layout_drawWord(WORD_O_CLOCK, colors.colors[COLOR_1]);
             break;
 
         case 1:
-            word_layout_drawWord(WORD_FIVE_MINUTES_TO, colors.colors[COLOR_4]);
-            word_layout_drawWord(WORD_PAST, colors.colors[COLOR_8]);
+            word_layout_drawWord(WORD_FIVE_MINUTES_TO, colors.colors[COLOR_2]);
+            word_layout_drawWord(WORD_PAST, colors.colors[COLOR_3]);
             break;
 
         case 2:
-            word_layout_drawWord(WORD_TEN_MINUTES_TO, colors.colors[COLOR_4]);
-            word_layout_drawWord(WORD_PAST, colors.colors[COLOR_8]);
+            word_layout_drawWord(WORD_TEN_MINUTES_TO, colors.colors[COLOR_2]);
+            word_layout_drawWord(WORD_PAST, colors.colors[COLOR_3]);
             break;
 
         case 3:
-            word_layout_drawWord(WORD_QUARTER, colors.colors[COLOR_4]);
-            word_layout_drawWord(WORD_PAST, colors.colors[COLOR_8]);
+            word_layout_drawWord(WORD_QUARTER, colors.colors[COLOR_2]);
+            word_layout_drawWord(WORD_PAST, colors.colors[COLOR_3]);
             break;
 
         case 4:
-            word_layout_drawWord(WORD_TWENTY_MINUTE, colors.colors[COLOR_6]);
+            word_layout_drawWord(WORD_TWENTY_MINUTE, colors.colors[COLOR_1]);
             break;
 
         case 5:
-            word_layout_drawWord(WORD_TWENTY_MINUTE, colors.colors[COLOR_4]);
-            word_layout_drawWord(WORD_TY_FIVE_MINUTE, colors.colors[COLOR_8]);
+            word_layout_drawWord(WORD_TWENTY_MINUTE, colors.colors[COLOR_2]);
+            word_layout_drawWord(WORD_TY_FIVE_MINUTE, colors.colors[COLOR_3]);
             break;
 
         case 6:
-            word_layout_drawWord(WORD_HALF, colors.colors[COLOR_4]);
-            word_layout_drawWord(WORD_PAST, colors.colors[COLOR_8]);
+            word_layout_drawWord(WORD_HALF, colors.colors[COLOR_2]);
+            word_layout_drawWord(WORD_PAST, colors.colors[COLOR_3]);
             break;
 
         case 7:
-            word_layout_drawWord(WORD_THIRTY_MINUTE, colors.colors[COLOR_4]);
-            word_layout_drawWord(WORD_TY_FIVE_MINUTE, colors.colors[COLOR_8]);
+            word_layout_drawWord(WORD_THIRTY_MINUTE, colors.colors[COLOR_2]);
+            word_layout_drawWord(WORD_TY_FIVE_MINUTE, colors.colors[COLOR_3]);
             break;
             
         case 8:
-            word_layout_drawWord(WORD_FORTY_MINUTE, colors.colors[COLOR_6]);
+            word_layout_drawWord(WORD_FORTY_MINUTE, colors.colors[COLOR_1]);
             break;
 
         case 9:
-            word_layout_drawWord(WORD_QUARTER, colors.colors[COLOR_4]);
-            word_layout_drawWord(WORD_TO, colors.colors[COLOR_8]);
+            word_layout_drawWord(WORD_QUARTER, colors.colors[COLOR_2]);
+            word_layout_drawWord(WORD_TO, colors.colors[COLOR_3]);
             hour++;
             break;
 
         case 10:
-            word_layout_drawWord(WORD_TEN_MINUTES_TO, colors.colors[COLOR_4]);
-            word_layout_drawWord(WORD_TO, colors.colors[COLOR_8]);
+            word_layout_drawWord(WORD_TEN_MINUTES_TO, colors.colors[COLOR_2]);
+            word_layout_drawWord(WORD_TO, colors.colors[COLOR_3]);
             hour++;
             break;
 
         case 11:
-            word_layout_drawWord(WORD_FIVE_MINUTES_TO, colors.colors[COLOR_4]);
-            word_layout_drawWord(WORD_TO, colors.colors[COLOR_8]);
+            word_layout_drawWord(WORD_FIVE_MINUTES_TO, colors.colors[COLOR_2]);
+            word_layout_drawWord(WORD_TO, colors.colors[COLOR_3]);
             hour++;
             break;
 
