@@ -175,9 +175,9 @@ void renderer_updateTransition() {
 
 Palette makeRandomPalette() {
     Palette p;
-
+    uint8_t hue_init = random(0, 255);
     for (int i = 0; i < NUM_COLORS; i++) {
-        p.colors[i] = CHSV(random(0, 255), random(0, 255), random(160, 255));
+        p.colors[i] = CHSV(hue_init + 64 * i, random(50, 255), random(160, 255));
     }
 
     return p;
