@@ -13,21 +13,14 @@ Date:   19-05-2026
 #include "microGL.h"
 #include "config.h"
 #include "rtc.h"
-#include <stdlib.h>
-
-// -------------------------
-// Function pointer types
-// -------------------------
-
-typedef void (*screen_render_fn_t)(const DateTime&);
-typedef void (*settings_render_fn_t)(void);
-
 #include "transitions.h"
-using transition_fn_t = void (*)(const TransitionContext&);
+#include "palette.h"
+#include <stdlib.h>
+#include <string.h>
 
-// -------------------------
-// Screen descriptor system
-// -------------------------
+typedef void (*screen_render_fn_t)(const DateTime&, const Palette&);
+typedef void (*transition_fn_t)(const TransitionContext&);
+typedef void (*settings_render_fn_t)(void);
 
 struct SecondsIndicator {
     uint8_t x, y;
@@ -39,7 +32,7 @@ struct ScreenDescriptor {
 };
 
 // -------------------------
-// Screens
+// Clock screens
 // -------------------------
 
 #include "word_clock.h"
@@ -51,7 +44,7 @@ static const ScreenDescriptor screen_table[] = {
     { word_clock_render,      {1, 7}  },
     { staircase_clock_render, {1, 7}  },
     { digital_clock_render,   {2, 12} },
-    { progress_clock_render,  {2, 12}  }
+    { progress_clock_render,  {2, 12} }
 };
 
 // -------------------------
@@ -75,29 +68,19 @@ static const settings_render_fn_t settings_table[] = {
 // Transitions
 // -------------------------
 
-#include "transitions.h"
-
 static const transition_fn_t transitions_table[] = {
     transition_dissolve,
     transition_fade
 };
 
 // -------------------------
-// Layers
+// End of adjustable code
 // -------------------------
 
 void clearLayers(void) {
     fill_solid(layer_bg.buffer, NUM_MATRIX_LEDS, CRGB::Black);
     fill_solid(layer_fg.buffer, NUM_MATRIX_LEDS, CRGB::Black);
     memset(layer_mask.buffer, 0, NUM_MATRIX_LEDS);
-}
-
-void clearLayer(RenderTarget<CRGB>& layer) {
-    fill_solid(layer.buffer, NUM_MATRIX_LEDS, CRGB::Black);
-}
-
-void clearLayer(RenderTarget<uint8_t>& layer) {
-    memset(layer.buffer, 0, NUM_MATRIX_LEDS);
 }
 
 void composeFrame(void) {
@@ -115,22 +98,24 @@ void composeFrame(void) {
     }
 }
 
-// -------------------------
-// Transition state
-// -------------------------
+static inline bool palette_equal(const Palette& a, const Palette& b) {
+    for (uint8_t i = 0; i < NUM_COLORS; i++) {
+        if (a.colors[i] != b.colors[i]) return false;
+    }
+    return true;
+}
 
-struct ClockTransitionState {
-    DateTime from_time;
-    DateTime to_time;
+struct RenderState {
+    const ScreenDescriptor* screen;
+    DateTime time;
+    Palette palette;
 };
 
-static ClockTransitionState clock_transition;
-
 struct TransitionState {
-    bool active;
+    bool active = false;
 
-    const ScreenDescriptor* from_screen;
-    const ScreenDescriptor* to_screen;
+    RenderState from;
+    RenderState to;
 
     transition_fn_t effect;
 
@@ -145,32 +130,23 @@ static TransitionState transition;
 static const ScreenDescriptor* last_screen = nullptr;
 static DateTime last_rtc_time;
 
+static Palette current_palette;
+static Palette target_palette;
+
 // -------------------------
 // Init
 // -------------------------
 
 void renderer_init(void) {
     DateTime* now = rtc_getTime();
-
     last_rtc_time = *now;
-
-    clock_transition.from_time = *now;
-    clock_transition.to_time   = *now;
-
     display_init();
 }
 
-// -------------------------
-// Transition control
-// -------------------------
-
-void renderer_startTransition(const ScreenDescriptor* from,
-                              const ScreenDescriptor* to,
-                              transition_fn_t effect)
-{
+void renderer_startTransition(const RenderState& from, const RenderState& to, transition_fn_t effect) {
     transition.active = true;
-    transition.from_screen = from;
-    transition.to_screen = to;
+    transition.from = from;
+    transition.to = to;
     transition.effect = effect;
     transition.start_ms = millis();
     transition.duration_ms = 500;
@@ -183,82 +159,82 @@ void renderer_startTransition(const ScreenDescriptor* from,
 void renderer_updateTransition() {
     if (!transition.active) return;
 
-    uint32_t elapsed = millis() - transition.start_ms;
-
-    if (elapsed >= transition.duration_ms) {
+    if (millis() - transition.start_ms >= transition.duration_ms) {
         transition.active = false;
+
+        last_screen = transition.to.screen;
+        last_rtc_time = transition.to.time;
+        current_palette = transition.to.palette;
     }
 }
 
-// -------------------------
-// Screen change detection
-// -------------------------
-
 void renderer_detectScreenChanges(AppState_t* app, DateTime* now)
 {
-    if (app->mode != MODE_NORMAL) return;
+    if (app->mode != MODE_NORMAL) {
+        return;
+    }
 
-    const ScreenDescriptor* current_screen =
-        &screen_table[app->clock_screen];
+    if (transition.active) {
+        return;
+    }
+
+    const ScreenDescriptor* current_screen = &screen_table[app->clock_screen];
+
+    target_palette = *palettes[app->palette % NUM_PALETTES];
 
     if (last_screen == nullptr) {
         last_screen = current_screen;
         last_rtc_time = *now;
+        current_palette = target_palette;
         return;
     }
 
-    if (now->minute() != last_rtc_time.minute()) {
-        clock_transition.from_time = last_rtc_time;
-        clock_transition.to_time = *now;
+    bool screen_changed = (current_screen != last_screen);
+    bool minute_changed = (now->minute() != last_rtc_time.minute());
+    bool palette_changed = !palette_equal(current_palette, target_palette);
 
-        transition_fn_t effect =
-            transitions_table[config.transition_effect];
+    if (screen_changed || minute_changed || palette_changed) {
 
-        renderer_startTransition(
-            current_screen,
-            current_screen,
-            effect
-        );
-
-        last_rtc_time = *now;
-    }
-
-    if (current_screen != last_screen) {
-        transition_fn_t effect =
-            transitions_table[config.transition_effect];
-
-        renderer_startTransition(
+        RenderState from = {
             last_screen,
+            last_rtc_time,
+            current_palette
+        };
+
+        RenderState to = {
             current_screen,
-            effect
-        );
+            *now,
+            target_palette
+        };
+
+        transition_fn_t effect = transitions_table[config.transition_effect];
+
+        renderer_startTransition(from, to, effect);
 
         last_screen = current_screen;
+        last_rtc_time = *now;
     }
 }
-
-// -------------------------
-// Transition rendering
-// -------------------------
 
 void renderer_drawTransition(void) {
     uint32_t elapsed = millis() - transition.start_ms;
 
-    if (elapsed > transition.duration_ms)
+    if (elapsed > transition.duration_ms) {
         elapsed = transition.duration_ms;
+    }        
 
     uint8_t t = (elapsed * 255) / transition.duration_ms;
 
     clearLayers();
 
     microGL_setTarget(layer_bg);
-    if (transition.from_screen && transition.from_screen->render) {
-        transition.from_screen->render(clock_transition.from_time);
+    if (transition.from.screen) {
+        transition.from.screen->render(transition.from.time, transition.from.palette);
     }
 
     microGL_setTarget(layer_fg);
-    if (transition.to_screen && transition.to_screen->render) {
-        transition.to_screen->render(clock_transition.to_time);
+    if (transition.to.screen) {
+        transition.to.screen->render(transition.to.time, transition.to.palette);
     }
 
     TransitionContext ctx;
@@ -270,10 +246,6 @@ void renderer_drawTransition(void) {
     }
 }
 
-// -------------------------
-// Main update
-// -------------------------
-
 void renderer_update(void) {
     AppState_t* app = app_get();
     DateTime* now = rtc_getTime();
@@ -284,6 +256,7 @@ void renderer_update(void) {
     static uint8_t val = 0;
 
     if (app->mode == MODE_NORMAL) {
+
         if (transition.active) {
             renderer_drawTransition();
             val = 0;
@@ -292,11 +265,10 @@ void renderer_update(void) {
 
             microGL_setTarget(layer_bg);
 
-            const ScreenDescriptor* screen =
-                &screen_table[app->clock_screen];
+            const ScreenDescriptor* screen = &screen_table[app->clock_screen];
 
             if (screen && screen->render) {
-                screen->render(*now);
+                screen->render(*now, current_palette);
 
                 static uint32_t next_tick = 0;
 
@@ -312,7 +284,7 @@ void renderer_update(void) {
         }
     } else {
         clearLayers();
-        
+
         settings_render_fn_t current = settings_table[app->settings_screen];
 
         if (current) {
