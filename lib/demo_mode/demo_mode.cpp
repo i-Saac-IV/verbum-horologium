@@ -16,7 +16,7 @@ static unsigned long next_demo_action;
 
 static const inputEventType_t demoEvents[] = {
     INPUT_EVENT_NEXT_SCREEN,
-    INPUT_EVENT_PREV_SCREEN,
+    // INPUT_EVENT_PREV_SCREEN,
     INPUT_EVENT_NEXT_COLOR
 };
 
@@ -44,4 +44,8 @@ void demo_mode_update(void) {
         demo_mode_triggerRandomAction();
         next_demo_action = millis() + random(MIN_ACTION_PERIOD, MAX_ACTION_PERIOD);
     }
+}
+
+void demo_mode_resetTimer(uint32_t t) {
+    next_demo_action = millis() + random(t, t + MAX_ACTION_PERIOD);
 }

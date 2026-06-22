@@ -8,6 +8,7 @@ Date:   28-04-2026
 
 #include "buttons.h"
 #include "event_manager.h"
+#include "demo_mode.h"
 
 #include <Arduino.h>
 #include <Adafruit_CAP1188.h>
@@ -60,6 +61,8 @@ void buttons_update(void) {
                 .type   = INPUT_EVENT_DOWN,
                 .source = button_sources[i]
             });
+
+            demo_mode_resetTimer(LONG_PAUSE);
         }
 
         /* ---------- RELEASE ---------- */
@@ -79,6 +82,8 @@ void buttons_update(void) {
                 .type   = INPUT_EVENT_UP,
                 .source = button_sources[i]
             });
+
+            demo_mode_resetTimer(LONG_PAUSE);
         }
     }
 
