@@ -315,7 +315,7 @@ void renderer_update(void) {
 
     while (event_manager_popUI(&event)) {
         if (event.type == INPUT_EVENT_DOWN) {
-            microGL_drawPixel(0, 12, CRGB(0, 255, 0));
+            // Reaction?
         }
     }
 
