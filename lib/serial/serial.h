@@ -12,6 +12,8 @@ Date:   28-04-2026
 #include <Arduino.h>
 #include <stdarg.h>
 
+#define DEBUG false
+
 #define BAUD_RATE 115200
 #define BUFFER_SIZE 256
 

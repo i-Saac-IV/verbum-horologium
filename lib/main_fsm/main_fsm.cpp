@@ -1,10 +1,13 @@
 /*
-    File:   main_fsm.cpp
-    Author: Isaac Pawley
-    Date:   20-05-2026
+
+File:   main_fsm.cpp
+Author: Isaac Pawley
+Date:   20-05-2026
+
 */
 
 #include "main_fsm.h"
+#include "rtc.h"
 #include <Arduino.h>
 
 #define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
@@ -30,15 +33,22 @@ AppState_t* app_get(void) {
 
 #include "config.h"
 
+static uint8_t edit_hour;
+static uint8_t edit_minute;
+static bool time_dirty;
+
 Setting_t settings[] = {
     {(uint8_t*)&config.time_format,      0, 1, 1},
-    {(uint8_t*)&config.min_brightness,   0, 255, 5},
+    {(uint8_t*)&config.min_brightness,   5, 255, 5},
     {(uint8_t*)&config.max_brightness,   0, 255, 5},
     {(uint8_t*)&config.nightMode_end,    0, 23, 1},
     {(uint8_t*)&config.nightMode_start,  0, 23, 1},
     {(uint8_t*)&config.auto_sleep,       0, 1, 1},
     {(uint8_t*)&config.enable_demo,      0, 1, 1},
-    {(uint8_t*)&config.transition_effect, 0, 1, 1}
+    {(uint8_t*)&config.transition_effect, 0, 1, 1},
+    {(uint8_t*)&config.color_mode, 0, 2, 1},
+    {&edit_hour, 0, 23, 1},
+    {&edit_minute, 0, 59, 1 }
 };
 
 const uint8_t SETTINGS_COUNT = sizeof(settings) / sizeof(settings[0]);
@@ -74,8 +84,7 @@ void action_enter_settings(AppState_t* app);
 void action_settings_next(AppState_t* app);
 void action_settings_prev(AppState_t* app);
 void action_settings_begin_edit(AppState_t* app);
-void action_settings_save(AppState_t* app);
-void action_settings_cancel(AppState_t* app);
+void action_settings_stop_edit(AppState_t* app);
 void action_settings_increment(AppState_t* app);
 void action_settings_decrement(AppState_t* app);
 void action_exit_settings(AppState_t* app);
@@ -124,7 +133,22 @@ static const Transition_t app_table[] = {
     { MODE_NORMAL,
         {INPUT_EVENT_LONG_PRESS, INPUT_SOURCE_BUTTON_TOP},
         MODE_SETTINGS,
-        action_enter_settings }
+        action_enter_settings },
+
+    { MODE_NORMAL,
+        {INPUT_EVENT_NEXT_SCREEN, INPUT_SOURCE_DEMO_MODE},
+        MODE_NORMAL,
+        action_next_screen },
+
+    { MODE_NORMAL,
+        {INPUT_EVENT_PREV_SCREEN, INPUT_SOURCE_DEMO_MODE},
+        MODE_NORMAL,
+        action_prev_screen },
+
+    { MODE_NORMAL,
+        {INPUT_EVENT_NEXT_COLOR, INPUT_SOURCE_DEMO_MODE},
+        MODE_NORMAL,
+        action_change_color_pallette },
 };
 
 // =====================================================
@@ -174,13 +198,15 @@ static const Transition_t settings_table[] = {
     { SETTINGS_EDIT_MODE,
       {INPUT_EVENT_SHORT_PRESS, INPUT_SOURCE_BUTTON_TOP},
       SETTINGS_IDLE_MODE,
-      nullptr },
+      action_settings_stop_edit },
 
     { SETTINGS_EDIT_MODE,
       {INPUT_EVENT_LONG_PRESS, INPUT_SOURCE_BUTTON_TOP},
       SETTINGS_IDLE_MODE,
-      nullptr },
+      action_settings_stop_edit },
 };
+
+static uint8_t settings_original_value;
 
 // =====================================================
 // INIT
@@ -257,11 +283,18 @@ void action_prev_screen(AppState_t *app) {
 }
 
 void action_change_color_pallette(AppState_t* app) {
-    app->palette = (Palette_t)next_index(app->palette, PALETTE_COUNT);
+    app->palette = (uint8_t)next_index(app->palette, 255);
 }
 
 void action_enter_settings(AppState_t* app) {
     app->settings_mode = SETTINGS_IDLE;
+
+    DateTime* now = rtc_getTime();
+
+    edit_hour = now->hour();
+    edit_minute = now->minute();
+
+    time_dirty = false;
 }
 
 // =====================================================
@@ -277,7 +310,24 @@ void action_settings_prev(AppState_t* app) {
 }
 
 void action_settings_begin_edit(AppState_t* app) {
-    // Not much here...
+    DateTime* now = rtc_getTime();
+
+    edit_hour = now->hour();
+    edit_minute = now->minute();
+
+    time_dirty = false;
+}
+
+void action_settings_stop_edit(AppState_t* app) {
+    Setting_t* s = &settings[(uint8_t)app->settings_screen];
+
+    if (*s->value == settings_original_value)
+        return;
+
+    if (time_dirty) {
+        rtc_setTime(edit_hour, edit_minute);
+        time_dirty = false;
+    }
 }
 
 void action_settings_increment(AppState_t* app) {
@@ -291,6 +341,10 @@ void action_settings_increment(AppState_t* app) {
     } else {
         *s->value = s->min;
     }
+
+    if (app->settings_screen == SETTINGS_SCREEN_SET_HOURS || app->settings_screen == SETTINGS_SCREEN_SET_MINUTES) {
+        time_dirty = true;
+    }
 }
 
 void action_settings_decrement(AppState_t* app) {
@@ -303,6 +357,10 @@ void action_settings_decrement(AppState_t* app) {
         }
     } else {
         *s->value = s->max;
+    }
+
+    if (app->settings_screen == SETTINGS_SCREEN_SET_HOURS || app->settings_screen == SETTINGS_SCREEN_SET_MINUTES) {
+        time_dirty = true;
     }
 }
 

@@ -27,6 +27,8 @@ typedef struct Task {
 #include "buttons.h"
 #include "main_fsm.h"
 #include "renderer.h"
+#include "demo_mode.h"
+#include "heartbeat.h"
 
 static Task_t tasks[TASK_COUNT] = {
 
@@ -34,7 +36,7 @@ static Task_t tasks[TASK_COUNT] = {
         .taskFunction = serial_taskPrint,
         .taskInitFunction = serial_init,
         .frequency = SERIAL_PRINT_FREQUENCY_HZ,
-        .enabled = true,
+        .enabled = DEBUG,
         .persistent = true
     },
 
@@ -76,6 +78,22 @@ static Task_t tasks[TASK_COUNT] = {
         .frequency = UPDATE_FSM_FREQUENCY_HZ,
         .enabled = true,
         .persistent = true
+    },
+
+    [UPDATE_DEMO_MODE] = {
+        .taskFunction = demo_mode_update,
+        .taskInitFunction = demo_mode_init,
+        .frequency = UPDATE_DEMO_MODE_FREQUENCY_HZ,
+        .enabled = true,
+        .persistent = true
+    },
+
+    [TRIGGER_HEARTBEAT] = {
+        .taskFunction = heartbeat_trigger,
+        .taskInitFunction = nullptr,
+        .frequency = TRIGGER_HEARTBEAT_FREQUENCY_HZ,
+        .enabled = false,
+        .persistent = false
     }
 };
 
@@ -114,7 +132,9 @@ bool task_scheduler_runQuery(Task_id_t taskId) {
 }
 
 void task_scheduler_executeTaskFunc(Task_id_t taskId) {
-    tasks[taskId].taskFunction();
+    if (tasks[taskId].taskFunction) {
+        tasks[taskId].taskFunction();
+    }
 }
 
 void task_scheduler_executeTask(Task_id_t taskId) {
@@ -134,7 +154,9 @@ void task_scheduler_init(void) {
 
 void task_scheduler_initAllTasks(void) {
     for (uint8_t i = 0; i < TASK_COUNT; i++) {
-        tasks[i].taskInitFunction();
+        if (tasks[i].taskInitFunction) {
+            tasks[i].taskInitFunction();
+        }
     }
 }
 

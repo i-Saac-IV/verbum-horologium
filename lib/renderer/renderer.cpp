@@ -13,21 +13,16 @@ Date:   19-05-2026
 #include "microGL.h"
 #include "config.h"
 #include "rtc.h"
+#include "transitions.h"
+#include "palette.h"
+#include "daylight_sensor.h"
+#include "demo_mode.h"
+#include "heartbeat.h"
 #include <stdlib.h>
 
-// -------------------------
-// Function pointer types
-// -------------------------
-
-typedef void (*screen_render_fn_t)(const DateTime&);
+typedef void (*screen_render_fn_t)(const DateTime&, const Palette&);
+typedef void (*transition_fn_t)(const TransitionContext&);
 typedef void (*settings_render_fn_t)(void);
-
-#include "transitions.h"
-using transition_fn_t = void (*)(const TransitionContext&);
-
-// -------------------------
-// Screen descriptor system
-// -------------------------
 
 struct SecondsIndicator {
     uint8_t x, y;
@@ -39,7 +34,7 @@ struct ScreenDescriptor {
 };
 
 // -------------------------
-// Screens
+// Clock screens
 // -------------------------
 
 #include "word_clock.h"
@@ -51,7 +46,7 @@ static const ScreenDescriptor screen_table[] = {
     { word_clock_render,      {1, 7}  },
     { staircase_clock_render, {1, 7}  },
     { digital_clock_render,   {2, 12} },
-    { progress_clock_render,  {2, 12}  }
+    { progress_clock_render,  {2, 12} }
 };
 
 // -------------------------
@@ -68,14 +63,16 @@ static const settings_render_fn_t settings_table[] = {
     settings_screen_nightStart,
     settings_screen_autoSleep,
     settings_screen_enableDemo,
-    settings_screen_transitionEffect
+    settings_screen_transitionEffect,
+    settings_screen_colorMode,
+    settings_screen_hours,
+    settings_screen_minutes,
+    settings_screen_version
 };
 
 // -------------------------
 // Transitions
 // -------------------------
-
-#include "transitions.h"
 
 static const transition_fn_t transitions_table[] = {
     transition_dissolve,
@@ -83,54 +80,27 @@ static const transition_fn_t transitions_table[] = {
 };
 
 // -------------------------
-// Layers
+// End of adjustable code
 // -------------------------
 
-void clearLayers(void) {
-    fill_solid(layer_bg.buffer, NUM_MATRIX_LEDS, CRGB::Black);
-    fill_solid(layer_fg.buffer, NUM_MATRIX_LEDS, CRGB::Black);
-    memset(layer_mask.buffer, 0, NUM_MATRIX_LEDS);
-}
-
-void clearLayer(RenderTarget<CRGB>& layer) {
-    fill_solid(layer.buffer, NUM_MATRIX_LEDS, CRGB::Black);
-}
-
-void clearLayer(RenderTarget<uint8_t>& layer) {
-    memset(layer.buffer, 0, NUM_MATRIX_LEDS);
-}
-
-void composeFrame(void) {
-    for (int i = 0; i < NUM_MATRIX_LEDS; i++) {
-        CRGB bgc = layer_bg.buffer[i];
-        CRGB fgc = layer_fg.buffer[i];
-        uint8_t m = layer_mask.buffer[i];
-
-        CRGB out;
-        out.r = (fgc.r * m + bgc.r * (255 - m)) >> 8;
-        out.g = (fgc.g * m + bgc.g * (255 - m)) >> 8;
-        out.b = (fgc.b * m + bgc.b * (255 - m)) >> 8;
-
-        led_matrix[i] = out;
+static inline bool palette_equal(const Palette& a, const Palette& b) {
+    for (uint8_t i = 0; i < NUM_COLORS; i++) {
+        if (a.colors[i] != b.colors[i]) return false;
     }
+    return true;
 }
 
-// -------------------------
-// Transition state
-// -------------------------
-
-struct ClockTransitionState {
-    DateTime from_time;
-    DateTime to_time;
+struct RenderState {
+    const ScreenDescriptor* screen;
+    DateTime time;
+    Palette palette;
 };
 
-static ClockTransitionState clock_transition;
-
 struct TransitionState {
-    bool active;
+    bool active = false;
 
-    const ScreenDescriptor* from_screen;
-    const ScreenDescriptor* to_screen;
+    RenderState from;
+    RenderState to;
 
     transition_fn_t effect;
 
@@ -145,32 +115,26 @@ static TransitionState transition;
 static const ScreenDescriptor* last_screen = nullptr;
 static DateTime last_rtc_time;
 
+static uint8_t last_palette_index = 0;
+static Palette current_palette;
+static Palette target_palette;
+
 // -------------------------
 // Init
 // -------------------------
 
 void renderer_init(void) {
+    AppState_t* app = app_get();
     DateTime* now = rtc_getTime();
-
     last_rtc_time = *now;
-
-    clock_transition.from_time = *now;
-    clock_transition.to_time   = *now;
-
+    target_palette = *palettes[app->palette % NUM_PALETTES];
     display_init();
 }
 
-// -------------------------
-// Transition control
-// -------------------------
-
-void renderer_startTransition(const ScreenDescriptor* from,
-                              const ScreenDescriptor* to,
-                              transition_fn_t effect)
-{
+void renderer_startTransition(const RenderState& from, const RenderState& to, transition_fn_t effect) {
     transition.active = true;
-    transition.from_screen = from;
-    transition.to_screen = to;
+    transition.from = from;
+    transition.to = to;
     transition.effect = effect;
     transition.start_ms = millis();
     transition.duration_ms = 500;
@@ -183,82 +147,123 @@ void renderer_startTransition(const ScreenDescriptor* from,
 void renderer_updateTransition() {
     if (!transition.active) return;
 
-    uint32_t elapsed = millis() - transition.start_ms;
-
-    if (elapsed >= transition.duration_ms) {
+    if (millis() - transition.start_ms >= transition.duration_ms) {
         transition.active = false;
+
+        last_screen = transition.to.screen;
+        last_rtc_time = transition.to.time;
+        current_palette = transition.to.palette;
     }
 }
 
-// -------------------------
-// Screen change detection
-// -------------------------
+Palette makeRandomPalette() {
+    Palette p;
+    uint8_t hue_init = random(0, 255);
+    for (int i = 0; i < NUM_COLORS; i++) {
+        p.colors[i] = CHSV(hue_init + 64 * i, random(50, 255), random(160, 255));
+    }
+
+    return p;
+}
+
+Palette shuffledPalette(const Palette& palette) {
+    Palette result = palette;
+
+    for (int i = NUM_COLORS - 1; i > 0; --i) {
+        int j = random(i + 1);
+
+        CRGB temp = result.colors[i];
+        result.colors[i] = result.colors[j];
+        result.colors[j] = temp;
+    }
+
+    return result;
+}
 
 void renderer_detectScreenChanges(AppState_t* app, DateTime* now)
 {
-    if (app->mode != MODE_NORMAL) return;
+    if (app->mode != MODE_NORMAL) {
+        return;
+    }
 
-    const ScreenDescriptor* current_screen =
-        &screen_table[app->clock_screen];
+    if (transition.active) {
+        return;
+    }
+
+    const ScreenDescriptor* current_screen = &screen_table[app->clock_screen];
+
+    if (last_palette_index != app->palette) {
+        if (config.color_mode == PALETTE) {
+            target_palette = *palettes[app->palette % NUM_PALETTES];
+        } else if (config.color_mode == PALETTE_RANDOMISED) {
+            target_palette = shuffledPalette(*palettes[app->palette % NUM_PALETTES]);
+        } else if (config.color_mode == PALETTE_RANDOM) {
+            target_palette = makeRandomPalette();
+        }
+        last_palette_index = app->palette;
+        demo_mode_resetTimer(SHORT_PAUSE);
+    }   
 
     if (last_screen == nullptr) {
         last_screen = current_screen;
         last_rtc_time = *now;
+        current_palette = target_palette;
         return;
     }
 
-    if (now->minute() != last_rtc_time.minute()) {
-        clock_transition.from_time = last_rtc_time;
-        clock_transition.to_time = *now;
+    bool screen_changed = (current_screen != last_screen);
+    bool minute_changed = (now->minute() != last_rtc_time.minute());
+    bool palette_changed = !palette_equal(current_palette, target_palette);
 
-        transition_fn_t effect =
-            transitions_table[config.transition_effect];
+    if (screen_changed || minute_changed || palette_changed) {
 
-        renderer_startTransition(
-            current_screen,
-            current_screen,
-            effect
-        );
+        if (!palette_changed) {
+            if (config.color_mode == PALETTE_RANDOMISED) {
+                target_palette = shuffledPalette(*palettes[app->palette % NUM_PALETTES]);
+            } else if (config.color_mode == PALETTE_RANDOM) {
+                target_palette = makeRandomPalette();
+            }
+            demo_mode_resetTimer(SHORT_PAUSE);
+        }
 
-        last_rtc_time = *now;
-    }
-
-    if (current_screen != last_screen) {
-        transition_fn_t effect =
-            transitions_table[config.transition_effect];
-
-        renderer_startTransition(
+        RenderState from = {
             last_screen,
+            last_rtc_time,
+            current_palette
+        };
+
+        RenderState to = {
             current_screen,
-            effect
-        );
+            *now,
+            target_palette
+        };
+
+        transition_fn_t effect = transitions_table[config.transition_effect];
+
+        renderer_startTransition(from, to, effect);
 
         last_screen = current_screen;
+        last_rtc_time = *now;
     }
 }
-
-// -------------------------
-// Transition rendering
-// -------------------------
 
 void renderer_drawTransition(void) {
     uint32_t elapsed = millis() - transition.start_ms;
 
-    if (elapsed > transition.duration_ms)
+    if (elapsed > transition.duration_ms) {
         elapsed = transition.duration_ms;
+    }        
 
     uint8_t t = (elapsed * 255) / transition.duration_ms;
 
-    clearLayers();
-
     microGL_setTarget(layer_bg);
-    if (transition.from_screen && transition.from_screen->render) {
-        transition.from_screen->render(clock_transition.from_time);
+    if (transition.from.screen) {
+        transition.from.screen->render(transition.from.time, transition.from.palette);
     }
 
     microGL_setTarget(layer_fg);
-    if (transition.to_screen && transition.to_screen->render) {
-        transition.to_screen->render(clock_transition.to_time);
+    if (transition.to.screen) {
+        transition.to.screen->render(transition.to.time, transition.to.palette);
     }
 
     TransitionContext ctx;
@@ -270,9 +275,18 @@ void renderer_drawTransition(void) {
     }
 }
 
-// -------------------------
-// Main update
-// -------------------------
+bool night_mode(DateTime& now) {
+    if (!config.auto_sleep) {
+        return false;
+    }
+
+    if (now.hour() >= config.nightMode_start || now.hour() <= config.nightMode_end) {
+        if (daylight_sensor_getScaledBrightness(FRONT_SENSOR) < config.min_brightness + 10) {
+            return true;
+        }
+    }
+    return false;
+}
 
 void renderer_update(void) {
     AppState_t* app = app_get();
@@ -284,35 +298,29 @@ void renderer_update(void) {
     static uint8_t val = 0;
 
     if (app->mode == MODE_NORMAL) {
+        const ScreenDescriptor* screen = &screen_table[app->clock_screen];
+
+        microGL_clearLayers();
+        heartbeat_update(screen->seconds_led.x, screen->seconds_led.y);
+
         if (transition.active) {
-            renderer_drawTransition();
-            val = 0;
+            if (!night_mode(*now)) {
+                renderer_drawTransition();
+            }
         } else {
-            clearLayers();
+            if (!night_mode(*now)) {
+                microGL_setTarget(layer_bg);
 
-            microGL_setTarget(layer_bg);
-
-            const ScreenDescriptor* screen =
-                &screen_table[app->clock_screen];
-
-            if (screen && screen->render) {
-                screen->render(*now);
-
-                static uint32_t next_tick = 0;
-
-                if (millis() >= next_tick) {
-                    next_tick = millis() + 1000;
-                    microGL_drawPixel(screen->seconds_led.x, screen->seconds_led.y, CRGB(255, 255, 255));
-                    val = 255;
-                } else {
-                    microGL_drawPixel(screen->seconds_led.x, screen->seconds_led.y, CRGB(val, val, val));
-                    val *= 0.90;
+                if (screen && screen->render) {
+                    screen->render(*now, current_palette);
                 }
             }
         }
     } else {
-        clearLayers();
-        
+        microGL_clearLayers();
+        heartbeat_update(2, 12);
+        microGL_setTarget(layer_bg);
+
         settings_render_fn_t current = settings_table[app->settings_screen];
 
         if (current) {
@@ -324,10 +332,10 @@ void renderer_update(void) {
 
     while (event_manager_popUI(&event)) {
         if (event.type == INPUT_EVENT_DOWN) {
-            microGL_drawPixel(0, 12, CRGB(0, 255, 0));
+            // Reaction?
         }
     }
 
-    composeFrame();
+    microGL_composeFrame();
     display_show();
 }

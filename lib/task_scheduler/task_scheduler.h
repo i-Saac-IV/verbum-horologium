@@ -18,6 +18,8 @@ typedef enum Task_id {
     READ_BUTTONS,
     UPDATE_RENDERER,
     UPDATE_FSM,
+    UPDATE_DEMO_MODE,
+    TRIGGER_HEARTBEAT,
     TASK_COUNT
 } Task_id_t;
 
@@ -27,6 +29,8 @@ typedef enum Task_id {
 #define READ_BUTTONS_FREQUENCY_HZ 100
 #define UPDATE_RENDERER_FREQUENCY_HZ 60
 #define UPDATE_FSM_FREQUENCY_HZ 50
+#define UPDATE_DEMO_MODE_FREQUENCY_HZ 1
+#define TRIGGER_HEARTBEAT_FREQUENCY_HZ 1
 
 void task_scheduler_enableTask(Task_id_t taskId);
 void task_scheduler_disableTask(Task_id_t taskId);
