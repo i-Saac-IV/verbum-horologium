@@ -147,3 +147,17 @@ void settings_screen_minutes(void) {
 
     setting_screen_indicator(10, app.settings_mode);
 }
+
+#include "version.h"
+
+void settings_screen_version(void) {
+    Setting_t* s = fsm_get_current_setting();
+
+    uint8_t val = (uint8_t)(*(s->value));
+
+    microGL_draw3x5Digit(0, 7, FW_VERSION_MAJOR, CHSV(0, 255, 255));
+    microGL_draw3x5Digit(6, 7, (FW_VERSION_MINOR / 10) % 10, CHSV(128, 255, 255));
+    microGL_draw3x5Digit(9, 7, FW_VERSION_MINOR % 10, CHSV(192, 255, 255));
+
+    setting_screen_indicator(11, app.settings_mode);
+}

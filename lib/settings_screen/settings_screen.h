@@ -20,5 +20,6 @@ void settings_screen_transitionEffect(void);
 void settings_screen_colorMode(void);
 void settings_screen_hours(void);
 void settings_screen_minutes(void);
+void settings_screen_version(void);
 
 #endif /* INC_SETTINGS_SCREEN_H_ */

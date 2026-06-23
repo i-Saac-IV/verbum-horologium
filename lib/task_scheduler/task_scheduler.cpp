@@ -36,7 +36,7 @@ static Task_t tasks[TASK_COUNT] = {
         .taskFunction = serial_taskPrint,
         .taskInitFunction = serial_init,
         .frequency = SERIAL_PRINT_FREQUENCY_HZ,
-        .enabled = true,
+        .enabled = DEBUG,
         .persistent = true
     },
 
