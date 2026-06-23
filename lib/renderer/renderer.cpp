@@ -64,7 +64,9 @@ static const settings_render_fn_t settings_table[] = {
     settings_screen_autoSleep,
     settings_screen_enableDemo,
     settings_screen_transitionEffect,
-    settings_screen_colorMode
+    settings_screen_colorMode,
+    settings_screen_hours,
+    settings_screen_minutes
 };
 
 // -------------------------
