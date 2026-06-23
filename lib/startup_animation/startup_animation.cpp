@@ -12,8 +12,9 @@ Date:   23-06-2026
 #include "display.h"
 #include "word_layout.h"
 #include "transitions.h"
+#include "heartbeat.h"
 
-void startup_animation_init(void) {
+void startup_animation(void) {
     microGL_setTarget(layer_bg);
 
     uint8_t total_length = wordPosition[WORD_VERBUM].length + wordPosition[WORD_HOROLOGIUM].length;
@@ -50,37 +51,22 @@ void startup_animation_init(void) {
         delay(LETTER_RATE);
     }
 
-    uint32_t next_tick = 0;
-    uint8_t counter = 3;
-    uint8_t val = 0;
-    uint8_t word_val = 255;
+    uint8_t delta = 5;
 
     TransitionContext ctx;
     ctx.t = 0;
     ctx.noise = NULL;
 
-    while (counter != 0 || millis() > 10000) {
+    while (ctx.t < 255 || millis() > 10000) {
 
         transition_fade(ctx);
-        if (ctx.t < 255) {
-            ctx.t += 5;
+
+        if (ctx.t + delta < 255) {
+            ctx.t += delta;
+        } else {
+            ctx.t = 255;
         }
 
-        if (millis() >= next_tick) {
-            next_tick = millis() + 1000;
-            microGL_setTarget(layer_bg);
-            microGL_drawPixel(1, 7, CRGB(255, 255, 255));
-            microGL_setTarget(layer_fg);
-            microGL_drawPixel(1, 7, CRGB(255, 255, 255));
-            val = 255;
-            counter--;
-        } else {
-            microGL_setTarget(layer_bg);
-            microGL_drawPixel(1, 7, CRGB(val, val, val));
-            microGL_setTarget(layer_fg);
-            microGL_drawPixel(1, 7, CRGB(val, val, val));
-            val *= 0.95;
-        }
         microGL_composeFrame();
         display_show();
         delay(1000 / 60);

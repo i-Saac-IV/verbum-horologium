@@ -11,6 +11,6 @@ Date:   23-06-2026
 
 #define LETTER_RATE 50
 
-void startup_animation_init(void);
+void startup_animation(void);
 
 #endif /* INC_STARTUP_ANIMATION_H_ */

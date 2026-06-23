@@ -11,9 +11,15 @@ Date:   23-06-2026
 #include <Arduino.h>
 
 static bool heartbeat_triggered = false;
+bool first_run = true;
 
 void heartbeat_trigger(void) {
-    heartbeat_triggered = true;
+    if (!first_run) {
+        heartbeat_triggered = true;
+        return;
+    } else {
+        first_run = false;
+    }
 }
 
 void heartbeat_update(uint8_t target_x, uint8_t target_y) {

@@ -29,7 +29,6 @@ typedef struct Task {
 #include "renderer.h"
 #include "demo_mode.h"
 #include "heartbeat.h"
-#include "startup_animation.h"
 
 static Task_t tasks[TASK_COUNT] = {
 
@@ -93,15 +92,7 @@ static Task_t tasks[TASK_COUNT] = {
         .taskFunction = heartbeat_trigger,
         .taskInitFunction = nullptr,
         .frequency = TRIGGER_HEARTBEAT_FREQUENCY_HZ,
-        .enabled = true,
-        .persistent = true
-    },
-
-    [RUN_STARTUP] = {
-        .taskFunction = nullptr,
-        .taskInitFunction = startup_animation_init,
-        .frequency = NULL,
-        .enabled = true,
+        .enabled = false,
         .persistent = false
     }
 };
