@@ -17,8 +17,8 @@ Date:   19-05-2026
 #include "palette.h"
 #include "daylight_sensor.h"
 #include "demo_mode.h"
+#include "heartbeat.h"
 #include <stdlib.h>
-#include <string.h>
 
 typedef void (*screen_render_fn_t)(const DateTime&, const Palette&);
 typedef void (*transition_fn_t)(const TransitionContext&);
@@ -79,27 +79,6 @@ static const transition_fn_t transitions_table[] = {
 // -------------------------
 // End of adjustable code
 // -------------------------
-
-void clearLayers(void) {
-    fill_solid(layer_bg.buffer, NUM_MATRIX_LEDS, CRGB::Black);
-    fill_solid(layer_fg.buffer, NUM_MATRIX_LEDS, CRGB::Black);
-    memset(layer_mask.buffer, 0, NUM_MATRIX_LEDS);
-}
-
-void composeFrame(void) {
-    for (int i = 0; i < NUM_MATRIX_LEDS; i++) {
-        CRGB bgc = layer_bg.buffer[i];
-        CRGB fgc = layer_fg.buffer[i];
-        uint8_t m = layer_mask.buffer[i];
-
-        CRGB out;
-        out.r = (fgc.r * m + bgc.r * (255 - m)) >> 8;
-        out.g = (fgc.g * m + bgc.g * (255 - m)) >> 8;
-        out.b = (fgc.b * m + bgc.b * (255 - m)) >> 8;
-
-        led_matrix[i] = out;
-    }
-}
 
 static inline bool palette_equal(const Palette& a, const Palette& b) {
     for (uint8_t i = 0; i < NUM_COLORS; i++) {
@@ -274,8 +253,6 @@ void renderer_drawTransition(void) {
 
     uint8_t t = (elapsed * 255) / transition.duration_ms;
 
-    clearLayers();
-
     microGL_setTarget(layer_bg);
     if (transition.from.screen) {
         transition.from.screen->render(transition.from.time, transition.from.palette);
@@ -318,17 +295,16 @@ void renderer_update(void) {
     static uint8_t val = 0;
 
     if (app->mode == MODE_NORMAL) {
+        const ScreenDescriptor* screen = &screen_table[app->clock_screen];
+
+        microGL_clearLayers();
+        heartbeat_update(screen->seconds_led.x, screen->seconds_led.y);
 
         if (transition.active) {
             if (!night_mode(*now)) {
                 renderer_drawTransition();
-                val = 0;
             }
         } else {
-            clearLayers();
-
-            const ScreenDescriptor* screen = &screen_table[app->clock_screen];
-
             if (!night_mode(*now)) {
                 microGL_setTarget(layer_bg);
 
@@ -336,20 +312,11 @@ void renderer_update(void) {
                     screen->render(*now, current_palette);
                 }
             }
-
-            static uint32_t next_tick = 0;
-
-            if (millis() >= next_tick) {
-                next_tick = millis() + 1000;
-                microGL_drawPixel(screen->seconds_led.x, screen->seconds_led.y, CRGB(255, 255, 255));
-                val = 255;
-            } else {
-                microGL_drawPixel(screen->seconds_led.x, screen->seconds_led.y, CRGB(val, val, val));
-                val *= 0.90;
-            }
         }
     } else {
-        clearLayers();
+        microGL_clearLayers();
+        heartbeat_update(2, 12);
+        microGL_setTarget(layer_bg);
 
         settings_render_fn_t current = settings_table[app->settings_screen];
 
@@ -366,6 +333,6 @@ void renderer_update(void) {
         }
     }
 
-    composeFrame();
+    microGL_composeFrame();
     display_show();
 }

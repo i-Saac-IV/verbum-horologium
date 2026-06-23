@@ -59,6 +59,8 @@ typedef struct {
     direction_t dir;
 } wordData_t;
 
+extern const wordData_t wordPosition[];
+
 void word_layout_drawWord(words word, CRGB color);
 
 #endif /* INC_WORD_LAYOUT_H_ */
