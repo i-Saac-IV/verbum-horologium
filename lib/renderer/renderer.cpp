@@ -17,8 +17,8 @@ Date:   19-05-2026
 #include "palette.h"
 #include "daylight_sensor.h"
 #include "demo_mode.h"
+#include "heartbeat.h"
 #include <stdlib.h>
-#include <string.h>
 
 typedef void (*screen_render_fn_t)(const DateTime&, const Palette&);
 typedef void (*transition_fn_t)(const TransitionContext&);
@@ -253,8 +253,6 @@ void renderer_drawTransition(void) {
 
     uint8_t t = (elapsed * 255) / transition.duration_ms;
 
-    microGL_clearLayers();
-
     microGL_setTarget(layer_bg);
     if (transition.from.screen) {
         transition.from.screen->render(transition.from.time, transition.from.palette);
@@ -297,17 +295,16 @@ void renderer_update(void) {
     static uint8_t val = 0;
 
     if (app->mode == MODE_NORMAL) {
+        const ScreenDescriptor* screen = &screen_table[app->clock_screen];
+
+        microGL_clearLayers();
+        heartbeat_update(screen->seconds_led.x, screen->seconds_led.y);
 
         if (transition.active) {
             if (!night_mode(*now)) {
                 renderer_drawTransition();
-                val = 0;
             }
         } else {
-            microGL_clearLayers();
-
-            const ScreenDescriptor* screen = &screen_table[app->clock_screen];
-
             if (!night_mode(*now)) {
                 microGL_setTarget(layer_bg);
 
@@ -315,20 +312,10 @@ void renderer_update(void) {
                     screen->render(*now, current_palette);
                 }
             }
-
-            static uint32_t next_tick = 0;
-
-            if (millis() >= next_tick) {
-                next_tick = millis() + 1000;
-                microGL_drawPixel(screen->seconds_led.x, screen->seconds_led.y, CRGB(255, 255, 255));
-                val = 255;
-            } else {
-                microGL_drawPixel(screen->seconds_led.x, screen->seconds_led.y, CRGB(val, val, val));
-                val *= 0.90;
-            }
         }
     } else {
         microGL_clearLayers();
+        heartbeat_update(2, 12);
         microGL_setTarget(layer_bg);
 
         settings_render_fn_t current = settings_table[app->settings_screen];

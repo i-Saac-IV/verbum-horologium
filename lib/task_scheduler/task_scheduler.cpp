@@ -28,6 +28,7 @@ typedef struct Task {
 #include "main_fsm.h"
 #include "renderer.h"
 #include "demo_mode.h"
+#include "heartbeat.h"
 #include "startup_animation.h"
 
 static Task_t tasks[TASK_COUNT] = {
@@ -84,6 +85,14 @@ static Task_t tasks[TASK_COUNT] = {
         .taskFunction = demo_mode_update,
         .taskInitFunction = demo_mode_init,
         .frequency = UPDATE_DEMO_MODE_FREQUENCY_HZ,
+        .enabled = true,
+        .persistent = true
+    },
+
+    [TRIGGER_HEARTBEAT] = {
+        .taskFunction = heartbeat_trigger,
+        .taskInitFunction = nullptr,
+        .frequency = TRIGGER_HEARTBEAT_FREQUENCY_HZ,
         .enabled = true,
         .persistent = true
     },
