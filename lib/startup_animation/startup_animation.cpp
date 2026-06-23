@@ -12,7 +12,6 @@ Date:   23-06-2026
 #include "display.h"
 #include "word_layout.h"
 #include "transitions.h"
-#include "heartbeat.h"
 
 void startup_animation(void) {
     microGL_setTarget(layer_bg);

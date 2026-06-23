@@ -23,8 +23,6 @@ void heartbeat_trigger(void) {
 }
 
 void heartbeat_update(uint8_t target_x, uint8_t target_y) {
-    static uint8_t current_x = 1;
-    static uint8_t current_y = 7;
 
     static uint8_t val = 0;
 
