@@ -1,0 +1,304 @@
+(footprint "L_Wurth_WE-TPC-1038"
+	(version 20260206)
+	(generator "pcbnew")
+	(generator_version "10.0")
+	(layer "F.Cu")
+	(descr "Tiny Power Inductor, body 10x10mm, https://www.we-online.com/catalog/en/WE-TPC#/articles/WE-TPC-1038")
+	(tags "SMT Shielded")
+	(property "Reference" "REF**"
+		(at 0 -6 0)
+		(unlocked yes)
+		(layer "F.SilkS")
+		(uuid "499379d7-4a3c-428c-8b10-0465fe817c90")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Value" "L_Wurth_WE-TPC-1038"
+		(at 0 6 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "850d2c4b-75b1-4d24-8544-16e99e8c28de")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Datasheet" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "e3ef56f5-2224-495c-9f9a-7da6a9f68426")
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+	)
+	(property "Description" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "a22eaf98-976e-441d-9e75-06b2fbfc71ed")
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+	)
+	(attr smd)
+	(duplicate_pad_numbers_are_jumpers no)
+	(fp_line
+		(start -2.15 -5.11)
+		(end -3.35 -3.905)
+		(stroke
+			(width 0.12)
+			(type default)
+		)
+		(layer "F.SilkS")
+		(uuid "f6559cb6-4147-4119-bf39-539779f5722f")
+	)
+	(fp_line
+		(start -2.15 -5.11)
+		(end 2.15 -5.11)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "ca6b432b-7fbb-4e63-ab3a-89db06156632")
+	)
+	(fp_line
+		(start -2.15 5.11)
+		(end -3.35 3.905)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "613b574e-e169-4fab-b7de-9d5b6e765daf")
+	)
+	(fp_line
+		(start -2.15 5.11)
+		(end 2.15 5.11)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "8d72c43d-9783-4f10-b0c3-06457d7052ce")
+	)
+	(fp_line
+		(start 2.15 -5.1)
+		(end 4.69 -2.56)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "db8f4845-b3d0-4eb7-ae40-c8abccc83fae")
+	)
+	(fp_line
+		(start 4.69 2.56)
+		(end 2.15 5.11)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "ec6d578a-0b3c-429d-ad4b-89a3005a2366")
+	)
+	(fp_line
+		(start 4.69 2.56)
+		(end 5.66 2.56)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "40b4ceb1-9c1c-4bb7-aee1-1f871a1e9eb9")
+	)
+	(fp_line
+		(start 5.66 -2.56)
+		(end 4.69 -2.56)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "f62d8edc-dd8c-4970-85d0-0a8b3ab3e77a")
+	)
+	(fp_line
+		(start 5.66 -2.56)
+		(end 5.66 2.56)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "1117ad8d-b7c7-49a1-ba4b-3d38633fe750")
+	)
+	(fp_rect
+		(start -5.65 -5.25)
+		(end 5.65 5.25)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(fill no)
+		(layer "F.CrtYd")
+		(uuid "6c68075c-fba1-4c81-a68a-2dfdd1ae53e2")
+	)
+	(fp_line
+		(start -5 -2.1)
+		(end -2.1 -5)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "36d6a7bf-2b94-4a83-a893-f9c1878af8d7")
+	)
+	(fp_line
+		(start -5 0)
+		(end -4 -0.5)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "45dd5deb-85e4-436d-aede-e5c73a00fc24")
+	)
+	(fp_line
+		(start -5 2.1)
+		(end -5 -2.1)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "aab9dcb7-2ce0-4641-a378-3841b367e525")
+	)
+	(fp_line
+		(start -5 2.1)
+		(end -2.1 5)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "ff6443b5-adb5-4c73-87a2-0f0ee586d965")
+	)
+	(fp_line
+		(start -4 -0.5)
+		(end -4 0.5)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "62999d02-aaa5-4926-b15d-98d124006910")
+	)
+	(fp_line
+		(start -4 0.5)
+		(end -5 0)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "2ea235e8-56e6-4fbf-859b-7b42c931b5ce")
+	)
+	(fp_line
+		(start -2.1 5)
+		(end 2.1 5)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "a5757895-0762-4c38-95df-bafbdf7b7114")
+	)
+	(fp_line
+		(start 2.1 -5)
+		(end -2.1 -5)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "9b3a2416-160f-48a7-ba53-c9c1f6cf080c")
+	)
+	(fp_line
+		(start 2.1 5)
+		(end 5 2.1)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "6f95302d-75f3-4491-b567-90ef5c836a15")
+	)
+	(fp_line
+		(start 5 -2.1)
+		(end 2.1 -5)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "0384c504-f562-464e-97de-81c33d8cc937")
+	)
+	(fp_line
+		(start 5 2.1)
+		(end 5 -2.1)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "678be67c-818f-46f4-a5c5-29f7e1b721cd")
+	)
+	(fp_text user "${REFERENCE}"
+		(at 0 0 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(uuid "603149db-6255-4b56-a8b0-012d465bea09")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(pad "1" smd rect
+		(at -4.5 0)
+		(size 1.8 4.6)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(uuid "6b013550-8936-4d37-b99b-2d62ebb7bf59")
+	)
+	(pad "2" smd rect
+		(at 4.5 0)
+		(size 1.8 4.6)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(uuid "55ce92ec-0fd8-4145-9ab4-f993ff0ac53a")
+	)
+	(embedded_fonts no)
+	(model "${KIPRJMOD}/verbum-horologium_footprints.pretty/L_Wurth_WE-TPC-1038.step"
+		(offset
+			(xyz 0 0 0)
+		)
+		(scale
+			(xyz 1 1 1)
+		)
+		(rotate
+			(xyz 0 0 0)
+		)
+	)
+)
