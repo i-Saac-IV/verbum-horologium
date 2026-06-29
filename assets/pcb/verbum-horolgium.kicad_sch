@@ -5,6 +5,129 @@
 	(uuid "d7e76cf7-fbfe-4ac0-9b34-cde22cca9555")
 	(paper "A4")
 	(lib_symbols
+		(symbol "Connector:TestPoint"
+			(pin_numbers
+				(hide yes)
+			)
+			(pin_names
+				(offset 0.762)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(in_pos_files yes)
+			(duplicate_pin_numbers_are_jumpers no)
+			(property "Reference" "TP"
+				(at 0 6.858 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "TestPoint"
+				(at 0 5.08 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 5.08 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Datasheet" ""
+				(at 5.08 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Description" "test point"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_keywords" "test point tp"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_fp_filters" "Pin* Test*"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(symbol "TestPoint_0_1"
+				(circle
+					(center 0 3.302)
+					(radius 0.762)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "TestPoint_1_1"
+				(pin passive line
+					(at 0 0 90)
+					(length 2.54)
+					(name "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
 		(symbol "Connector_Generic:Conn_01x01"
 			(pin_names
 				(offset 1.016)
@@ -5082,6 +5205,12 @@
 		(uuid "a2b306ff-987f-45b6-8728-48aef49d8d72")
 	)
 	(junction
+		(at 83.82 52.07)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "a62bf95a-6898-4f3d-9568-002235582f1f")
+	)
+	(junction
 		(at 247.65 49.53)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -5164,6 +5293,12 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "ee1072de-837f-464c-85c8-d5348e482094")
+	)
+	(junction
+		(at 180.34 99.06)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "f756b566-0fdb-4082-9434-606cb6bac2db")
 	)
 	(junction
 		(at 210.82 52.07)
@@ -5557,6 +5692,26 @@
 	)
 	(wire
 		(pts
+			(xy 180.34 99.06) (xy 191.77 99.06)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "62b27ca7-edfe-4728-8be9-d4f172d22b00")
+	)
+	(wire
+		(pts
+			(xy 66.04 52.07) (xy 72.39 52.07)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "63ceddc7-5363-4f11-bac5-17e4eadc921c")
+	)
+	(wire
+		(pts
 			(xy 241.3 143.51) (xy 236.22 143.51)
 		)
 		(stroke
@@ -5597,6 +5752,16 @@
 	)
 	(wire
 		(pts
+			(xy 83.82 52.07) (xy 95.25 52.07)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "7046aff9-9b3a-4721-8ef4-7d048e1f0b2c")
+	)
+	(wire
+		(pts
 			(xy 114.3 111.76) (xy 121.92 111.76)
 		)
 		(stroke
@@ -5617,7 +5782,7 @@
 	)
 	(wire
 		(pts
-			(xy 74.93 49.53) (xy 74.93 52.07)
+			(xy 66.04 49.53) (xy 66.04 52.07)
 		)
 		(stroke
 			(width 0)
@@ -5907,7 +6072,7 @@
 	)
 	(wire
 		(pts
-			(xy 171.45 99.06) (xy 191.77 99.06)
+			(xy 162.56 99.06) (xy 180.34 99.06)
 		)
 		(stroke
 			(width 0)
@@ -5947,7 +6112,7 @@
 	)
 	(wire
 		(pts
-			(xy 88.9 52.07) (xy 95.25 52.07)
+			(xy 80.01 52.07) (xy 83.82 52.07)
 		)
 		(stroke
 			(width 0)
@@ -6107,16 +6272,6 @@
 	)
 	(wire
 		(pts
-			(xy 74.93 52.07) (xy 81.28 52.07)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "f2a60359-4392-4c2a-ac9d-cb6d65a4d137")
-	)
-	(wire
-		(pts
 			(xy 85.09 163.83) (xy 101.6 163.83)
 		)
 		(stroke
@@ -6196,7 +6351,7 @@
 		(uuid "18c8eb98-d9ed-4fb8-bc52-8a1c58260ba0")
 	)
 	(label "FRONT_SENSOR"
-		(at 171.45 99.06 0)
+		(at 162.56 99.06 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -6329,7 +6484,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Connector_Wire:SolderWire-1.5sqmm_1x02_P7.8mm_D1.7mm_OD3.9mm_Relief"
+		(property "Footprint" "verbum-horologium_footprints:SolderWire-1.5sqmm_1x2_P5mm_D1.7mm_OD3mm_Relief"
 			(at 58.42 29.21 0)
 			(hide yes)
 			(show_name no)
@@ -6582,7 +6737,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Connector_Wire:SolderWire-1.5sqmm_1x02_P7.8mm_D1.7mm_OD3.9mm_Relief"
+		(property "Footprint" "verbum-horologium_footprints:SolderWire-1.5sqmm_1x2_P5mm_D1.7mm_OD3mm_Relief"
 			(at 39.37 29.21 0)
 			(hide yes)
 			(show_name no)
@@ -6727,6 +6882,85 @@
 			(project "verbum-horolgium"
 				(path "/d7e76cf7-fbfe-4ac0-9b34-cde22cca9555"
 					(reference "D1")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Connector:TestPoint")
+		(at 171.45 52.07 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "2bab1fa4-807f-4183-9018-ead84a4e2d59")
+		(property "Reference" "TP1"
+			(at 173.99 48.7679 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" ""
+			(at 173.99 50.0379 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Connector_PinHeader_1.00mm:PinHeader_1x01_P1.00mm_Vertical"
+			(at 176.53 52.07 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 176.53 52.07 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "test point"
+			(at 171.45 52.07 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "7382d9d2-f8f8-466b-ae29-359882caecb5")
+		)
+		(instances
+			(project "verbum-horolgium"
+				(path "/d7e76cf7-fbfe-4ac0-9b34-cde22cca9555"
+					(reference "TP1")
 					(unit 1)
 				)
 			)
@@ -7338,6 +7572,170 @@
 			(project "verbum-horolgium"
 				(path "/d7e76cf7-fbfe-4ac0-9b34-cde22cca9555"
 					(reference "C5")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Connector_Generic:Conn_01x03")
+		(at 171.45 135.89 0)
+		(mirror x)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "3a57ee50-860b-4656-88a3-ac05788caf5d")
+		(property "Reference" "J4"
+			(at 173.99 137.1601 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "TOUCH"
+			(at 173.99 134.6201 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "verbum-horologium_footprints:SolderWire-1.5sqmm_1x3_P5mm_D1.7mm_OD3mm_Relief"
+			(at 171.45 135.89 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 171.45 135.89 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Generic connector, single row, 01x03, script generated (kicad-library-utils/schlib/autogen/connector/)"
+			(at 171.45 135.89 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "2"
+			(uuid "bf4c5f51-b4cf-4f5e-8564-f095b3dab2e4")
+		)
+		(pin "3"
+			(uuid "13035e35-207e-456d-9ed2-38c2c32f588a")
+		)
+		(pin "1"
+			(uuid "61061d36-a278-4f78-afd3-027a52b71b11")
+		)
+		(instances
+			(project "verbum-horolgium"
+				(path "/d7e76cf7-fbfe-4ac0-9b34-cde22cca9555"
+					(reference "J4")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Connector:TestPoint")
+		(at 83.82 52.07 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "3eb017d1-5238-47e5-90da-0f1d92c787a2")
+		(property "Reference" "TP2"
+			(at 86.36 48.7679 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" ""
+			(at 86.36 50.0379 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Connector_PinHeader_1.00mm:PinHeader_1x01_P1.00mm_Vertical"
+			(at 88.9 52.07 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 88.9 52.07 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "test point"
+			(at 83.82 52.07 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "833dcc80-7a73-4c3f-a632-e8138d0bf93d")
+		)
+		(instances
+			(project "verbum-horolgium"
+				(path "/d7e76cf7-fbfe-4ac0-9b34-cde22cca9555"
+					(reference "TP2")
 					(unit 1)
 				)
 			)
@@ -8328,7 +8726,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Connector_Wire:SolderWire-1.5sqmm_1x01_D1.7mm_OD3mm_Relief"
+		(property "Footprint" "verbum-horologium_footprints:SolderWire-1.5sqmm_1x1_P5mm_D1.7mm_OD3mm_Relief"
 			(at 250.19 109.22 0)
 			(hide yes)
 			(show_name no)
@@ -8693,7 +9091,7 @@
 	)
 	(symbol
 		(lib_id "Device:Fuse")
-		(at 85.09 52.07 90)
+		(at 76.2 52.07 90)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -8704,7 +9102,7 @@
 		(fields_autoplaced yes)
 		(uuid "756fc0f4-c700-49e8-8b13-93857e8a014c")
 		(property "Reference" "F1"
-			(at 85.09 45.72 90)
+			(at 76.2 45.72 90)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -8714,7 +9112,7 @@
 			)
 		)
 		(property "Value" "2.5A"
-			(at 85.09 48.26 90)
+			(at 76.2 48.26 90)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -8724,7 +9122,7 @@
 			)
 		)
 		(property "Footprint" "Fuse:Fuse_0603_1608Metric"
-			(at 85.09 53.848 90)
+			(at 76.2 53.848 90)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -8735,7 +9133,7 @@
 			)
 		)
 		(property "Datasheet" "https://nz.mouser.com/datasheet/3/508/1/JB06F_1.pdf"
-			(at 85.09 52.07 0)
+			(at 76.2 52.07 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -8746,7 +9144,7 @@
 			)
 		)
 		(property "Description" "Fuse"
-			(at 85.09 52.07 0)
+			(at 76.2 52.07 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -8757,7 +9155,7 @@
 			)
 		)
 		(property "PN" "JB06F2501R"
-			(at 85.09 52.07 90)
+			(at 76.2 52.07 90)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -8777,6 +9175,84 @@
 			(project "verbum-horolgium"
 				(path "/d7e76cf7-fbfe-4ac0-9b34-cde22cca9555"
 					(reference "F1")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 80.01 62.23 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "766e0620-2da0-46ac-9b2d-39f8dd639291")
+		(property "Reference" "#PWR025"
+			(at 80.01 68.58 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "GND"
+			(at 80.01 67.31 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 80.01 62.23 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 80.01 62.23 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+			(at 80.01 62.23 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "b7b44e2e-6b95-4c1e-9e59-a937fa25bdac")
+		)
+		(instances
+			(project "verbum-horolgium"
+				(path "/d7e76cf7-fbfe-4ac0-9b34-cde22cca9555"
+					(reference "#PWR025")
 					(unit 1)
 				)
 			)
@@ -8933,6 +9409,85 @@
 			(project "verbum-horolgium"
 				(path "/d7e76cf7-fbfe-4ac0-9b34-cde22cca9555"
 					(reference "#PWR017")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Connector:TestPoint")
+		(at 80.01 62.23 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "84c0b5d4-3d17-47b1-bcb9-7703b52a0ecc")
+		(property "Reference" "TP4"
+			(at 82.55 58.9279 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" ""
+			(at 82.55 60.1979 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Connector_PinHeader_1.00mm:PinHeader_1x01_P1.00mm_Vertical"
+			(at 85.09 62.23 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 85.09 62.23 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "test point"
+			(at 80.01 62.23 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "2ea60c88-e56a-4934-8684-df31a8fb0800")
+		)
+		(instances
+			(project "verbum-horolgium"
+				(path "/d7e76cf7-fbfe-4ac0-9b34-cde22cca9555"
+					(reference "TP4")
 					(unit 1)
 				)
 			)
@@ -9208,7 +9763,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Connector_Wire:SolderWire-1.5sqmm_1x02_P6mm_D1.7mm_OD3mm_Relief"
+		(property "Footprint" "verbum-horologium_footprints:SolderWire-1.5sqmm_1x2_P5mm_D1.7mm_OD3mm_Relief"
 			(at 193.04 101.6 90)
 			(hide yes)
 			(show_name no)
@@ -9440,6 +9995,85 @@
 		)
 	)
 	(symbol
+		(lib_id "Connector:TestPoint")
+		(at 180.34 99.06 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "a4757c41-4904-46b1-80c4-951b9a29c917")
+		(property "Reference" "TP3"
+			(at 182.88 95.7579 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" ""
+			(at 182.88 97.0279 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Connector_PinHeader_1.00mm:PinHeader_1x01_P1.00mm_Vertical"
+			(at 185.42 99.06 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 185.42 99.06 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "test point"
+			(at 180.34 99.06 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "7382d9d2-f8f8-466b-ae29-359882caecb5")
+		)
+		(instances
+			(project "verbum-horolgium"
+				(path "/d7e76cf7-fbfe-4ac0-9b34-cde22cca9555"
+					(reference "TP3")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "Device:C")
 		(at 171.45 55.88 0)
 		(unit 1)
@@ -9643,7 +10277,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "verbum-horologium_footprints:SolderWire-1.5sqmm_1x13_P6mm_D1.7mm_OD3mm_Relief"
+		(property "Footprint" "verbum-horologium_footprints:SolderWire-1.5sqmm_1x13_P5mm_D1.7mm_OD3mm_Relief"
 			(at 263.525 44.45 0)
 			(hide yes)
 			(show_name no)
@@ -10018,7 +10652,7 @@
 				)
 			)
 		)
-		(property "Footprint" "verbum-horologium_footprints:SolderWire-1.5sqmm_1x13_P6mm_D1.7mm_OD3mm_Relief"
+		(property "Footprint" "verbum-horologium_footprints:SolderWire-1.5sqmm_1x13_P5mm_D1.7mm_OD3mm_Relief"
 			(at 242.57 44.45 0)
 			(hide yes)
 			(show_name no)
@@ -10101,7 +10735,7 @@
 	)
 	(symbol
 		(lib_id "power:VDD")
-		(at 74.93 49.53 0)
+		(at 66.04 49.53 0)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -10112,7 +10746,7 @@
 		(fields_autoplaced yes)
 		(uuid "d5724c2b-ced2-461c-8e5c-a0bd292ef9b5")
 		(property "Reference" "#PWR07"
-			(at 74.93 53.34 0)
+			(at 66.04 53.34 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -10123,7 +10757,7 @@
 			)
 		)
 		(property "Value" "VDD"
-			(at 74.93 44.45 0)
+			(at 66.04 44.45 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -10133,7 +10767,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 74.93 49.53 0)
+			(at 66.04 49.53 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -10144,7 +10778,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 74.93 49.53 0)
+			(at 66.04 49.53 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -10155,7 +10789,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"VDD\""
-			(at 74.93 49.53 0)
+			(at 66.04 49.53 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -10340,91 +10974,6 @@
 			(project "verbum-horolgium"
 				(path "/d7e76cf7-fbfe-4ac0-9b34-cde22cca9555"
 					(reference "#PWR021")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Connector_Generic:Conn_01x03")
-		(at 171.45 135.89 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom no)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "dbaf12d4-bdd8-4e8d-b866-2d2261a58c59")
-		(property "Reference" "J4"
-			(at 173.99 134.6199 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "TOUCH"
-			(at 173.99 137.1599 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Connector_Wire:SolderWire-1.5sqmm_1x03_P6mm_D1.7mm_OD3mm_Relief"
-			(at 171.45 135.89 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 171.45 135.89 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "Generic connector, single row, 01x03, script generated (kicad-library-utils/schlib/autogen/connector/)"
-			(at 171.45 135.89 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "2"
-			(uuid "b07c030f-2af3-4b4b-856e-13dbcc890e4d")
-		)
-		(pin "3"
-			(uuid "58362630-2f36-421c-a745-a1b3dcc84c15")
-		)
-		(pin "1"
-			(uuid "bb0f1130-807c-410f-a7ab-564454b1bf1b")
-		)
-		(instances
-			(project "verbum-horolgium"
-				(path "/d7e76cf7-fbfe-4ac0-9b34-cde22cca9555"
-					(reference "J4")
 					(unit 1)
 				)
 			)
