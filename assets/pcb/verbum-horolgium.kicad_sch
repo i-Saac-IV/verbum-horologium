@@ -10546,7 +10546,7 @@
 				)
 			)
 		)
-		(property "Footprint" "SOIC_05WU-7_DIO"
+		(property "Footprint" "verbum-horologium_footprints:SOIC_05WU-7_DIO"
 			(at 123.19 63.5 0)
 			(hide yes)
 			(show_name no)
